@@ -23,29 +23,26 @@ jobs:
       with:
         distribution: temurin
         java-version: 17
-
-    - name: Install Android SDK Command-line Tools (fixed structure)
+    - name: Prepare Android SDK (sdkmanager)
+      env:
+        ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
       run: |
         set -e
-        echo "Installing Android cmdline-tools..."
-        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-        curl -sLo /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-
-        # Create 'latest' dir and unzip directly into it
-        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-        unzip -q /tmp/cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-
-        # If Google nested it under cmdline-tools/, flatten it
-        if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools" ]; then
-          mv "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
-          rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools"
+        SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+        if [ ! -x "$SDKMANAGER" ]; then
+          echo "Installing Android cmdline-tools..."
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+          curl -sLo /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          unzip -q /tmp/cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          # Some archives nest directory; normalize path
+          if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools" ]; then
+            mv "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest" || true
+          fi
         fi
-
-        echo "Checking sdkmanager works..."
-        "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --version
-
-        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
-        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        "$SDKMANAGER" --version || true
+        yes | "$SDKMANAGER" --licenses
+        yes | "$SDKMANAGER" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
     - name: Create local.properties
       working-directory: NDA
@@ -60,22 +57,18 @@ jobs:
         java -version
         ./gradlew --version
 
-    - name: Install Gradle 7.6.3
-      run: |
-        wget -q https://services.gradle.org/distributions/gradle-7.6.3-bin.zip
-        unzip -q gradle-7.6.3-bin.zip -d $HOME/gradle
-        echo "$HOME/gradle/gradle-7.6.3/bin" >> $GITHUB_PATH
-
     - name: Build APK
       working-directory: NDA
       env:
         ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
         ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
       run: ./gradlew clean :app:assembleDebug --no-daemon --stacktrace --info --warning-mode all
-
+    - name: Clean Gradle cache
+      run: ./gradlew clean
     - name: Copy debug APK to canonical path (compat)
       run: |
         set -e
+        # Prefer unsigned or regular debug APK if present
         found=$(ls -1 NDA/app/build/outputs/apk/debug/*.apk 2>/dev/null | grep -E 'app-debug.*\.apk$' | head -n 1 || true)
         if [ -z "$found" ]; then
           found=$(ls -1 NDA/app/build/outputs/apk/debug/*.apk 2>/dev/null | head -n 1 || true)
@@ -90,17 +83,27 @@ jobs:
         else
           echo "No debug APK found to copy"
         fi
-
+    - name: Clean Gradle cache
+      run: ./gradlew clean
     - name: List build output files
       run: |
         echo "Listing APK/AAB outputs:"
-        find NDA/app/build/outputs -type f -maxdepth 8 -print || echo "Build outputs folder not found"
+        find NDA/app/build/outputs -type f -maxdepth 8 -printf "%p\n" || echo "Build outputs folder not found"
 
-    - name: Upload APK and AAB artifacts
+    - name: Upload APK artifact(s)
       uses: actions/upload-artifact@v4
       with:
-        name: android-build-artifacts
+        name: app-debug-artifacts
         path: |
           NDA/app/build/outputs/**/*.apk
           NDA/app/build/outputs/**/*.aab
         if-no-files-found: warn
+
+
+
+
+
+
+
+
+
