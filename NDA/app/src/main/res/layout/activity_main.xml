@@ -81,7 +81,7 @@
             <com.google.android.material.textfield.TextInputEditText android:id="@+id/etDearnessAllowance" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="numberDecimal" android:text="38.0" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <CheckBox android:id="@+id/cbNationalHoliday" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🎉 National Holiday" android:textSize="16sp" android:textColor="@color/black" android:layout_marginBottom="16dp" />
+        <CheckBox android:id="@+id/cbNationalHoliday" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🎉 National Holiday" android:textSize="16sp" android:textColor="@color/accent_green" android:layout_marginBottom="16dp" />
 
         <TextView
             android:id="@+id/tvCeilingWarning"
