@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-  
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
       ANDROID_SDK_ROOT: $HOME/android-sdk
       ANDROID_HOME: $HOME/android-sdk
@@ -24,28 +23,32 @@ jobs:
         distribution: temurin
         java-version: 17
 
-    - name: Install Android SDK Command-line Tools (fixed structure)
+    - name: Install Android SDK Command-line Tools
       run: |
         set -e
         echo "Installing Android cmdline-tools..."
         mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+
         curl -sLo /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
 
-        # Create 'latest' dir and unzip directly into it
-        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-        unzip -q /tmp/cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+        # Unzip into temp folder
+        mkdir -p /tmp/cmdline-tools
+        unzip -q /tmp/cmdtools.zip -d /tmp/cmdline-tools
 
-        # If Google nested it under cmdline-tools/, flatten it
-        if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools" ]; then
-          mv "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
-          rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/latest/cmdline-tools"
-        fi
+        # Move correct contents into .../latest/
+        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+        mv /tmp/cmdline-tools/cmdline-tools/* "$ANDROID_SDK_ROOT/cmdline-tools/latest"
 
         echo "Checking sdkmanager works..."
         "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --version
 
+    - name: Accept Licenses and Install Android 33 packages
+      run: |
         yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
-        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
+          "platform-tools" \
+          "platforms;android-33" \
+          "build-tools;33.0.2"
 
     - name: Create local.properties
       working-directory: NDA
@@ -54,26 +57,23 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./NDA/gradlew
 
-    - name: Show tool versions
-      working-directory: NDA
-      run: |
-        java -version
-        ./gradlew --version
-
     - name: Install Gradle 7.6.3
       run: |
         wget -q https://services.gradle.org/distributions/gradle-7.6.3-bin.zip
         unzip -q gradle-7.6.3-bin.zip -d $HOME/gradle
         echo "$HOME/gradle/gradle-7.6.3/bin" >> $GITHUB_PATH
 
+    - name: Show tool versions
+      working-directory: NDA
+      run: |
+        java -version
+        ./gradlew --version
+
     - name: Build APK
       working-directory: NDA
-      env:
-        ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
       run: ./gradlew clean :app:assembleDebug --no-daemon --stacktrace --info --warning-mode all
 
-    - name: Copy debug APK to canonical path (compat)
+    - name: Copy debug APK to canonical path
       run: |
         set -e
         found=$(ls -1 NDA/app/build/outputs/apk/debug/*.apk 2>/dev/null | grep -E 'app-debug.*\.apk$' | head -n 1 || true)
@@ -82,10 +82,7 @@ jobs:
         fi
         if [ -n "$found" ]; then
           if [ "$found" != "NDA/app/build/outputs/apk/debug/app-debug.apk" ]; then
-            echo "Copying $found to NDA/app/build/outputs/apk/debug/app-debug.apk"
             cp "$found" NDA/app/build/outputs/apk/debug/app-debug.apk
-          else
-            echo "Canonical app-debug.apk already present"
           fi
         else
           echo "No debug APK found to copy"
@@ -94,12 +91,12 @@ jobs:
     - name: List build output files
       run: |
         echo "Listing APK/AAB outputs:"
-        find NDA-CALCULATOR/app/build/outputs -type f -maxdepth 8 -print || echo "Build outputs folder not found"
+        find NDA/app/build/outputs -type f -maxdepth 8 -printf "%p\n" || echo "Build outputs folder not found"
 
-    - name: Upload APK and AAB artifacts
+    - name: Upload APK artifact(s)
       uses: actions/upload-artifact@v4
       with:
-        name: android-build-artifacts
+        name: app-debug-artifacts
         path: |
           NDA/app/build/outputs/**/*.apk
           NDA/app/build/outputs/**/*.aab
