@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">NDA CALCULATOR</string>
+    <string name="calculate">Calculate Allowance</string>
+    <string name="save_record">Save Record</string>
+    <string name="export_pdf">Share Summary</string>
+    <string name="clear_all">Clear All</string>
+    <string name="duty_date">Duty Date</string>
+    <string name="duty_from">From Time</string>
+    <string name="duty_to">To Time</string>
+    <string name="basic_pay">Basic Pay (₹)</string>
+    <string name="ceiling_limit">Ceiling Limit (₹)</string>
+    <string name="dearness_allowance">Dearness Allowance (%)</string>
+    <string name="national_holiday">National Holiday</string>
+    <string name="total_duty_hours">Total Duty Hours</string>
+    <string name="night_hours_22_00">Night Hours (22:00-00:00)</string>
+    <string name="night_hours_00_06">Night Hours (00:00-06:00)</string>
+    <string name="total_night_hours">Total Night Hours</string>
+    <string name="effective_basic_pay">Effective Basic Pay</string>
+    <string name="night_allowance">Night Duty Allowance</string>
+</resources>

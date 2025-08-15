@@ -1,0 +1,10 @@
+<resources>
+    <color name="primary_blue">#3498db</color>
+    <color name="primary_dark">#2c3e50</color>
+    <color name="accent_green">#27ae60</color>
+    <color name="accent_orange">#f39c12</color>
+    <color name="accent_red">#e74c3c</color>
+    <color name="light_gray">#f8f9fa</color>
+    <color name="border_gray">#e9ecef</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
