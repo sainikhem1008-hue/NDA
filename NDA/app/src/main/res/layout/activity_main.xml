@@ -3,74 +3,122 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#F5F5F5">
 
     <LinearLayout
         android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Duty Date -->
+        <!-- Header -->
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NIGHT DUTY CALCULATOR"
+            android:gravity="center"
+            android:background="#2196F3"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Duty date -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Duty Date">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDutyDate"
-                android:inputType="date"
                 android:focusable="false"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Duty From -->
+        <!-- Duty from / to -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Duty From">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDutyFrom"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Duty To">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDutyTo"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Quick Duty Buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btnMorningDuty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Morning Duty (08-16)"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF"
+                android:layout_margin="4dp"/>
+
+            <Button
+                android:id="@+id/btnEveningDuty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Evening Duty (16-00)"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF"
+                android:layout_margin="4dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnNightDuty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Night Duty (00-08)"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"
+            android:layout_gravity="center"/>
+
+        <!-- Basic Pay -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Duty From (24H)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDutyFrom"
-                android:inputType="time"
-                android:focusable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Duty To -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Duty To (24H)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDutyTo"
-                android:inputType="time"
-                android:focusable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Pay Inputs -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Basic Pay (₹)">
+            android:hint="Basic Pay">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBasicPay"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ceiling Limit (₹)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etCeilingLimit"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
         <!-- Dearness Allowance -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -80,116 +128,136 @@
                 android:id="@+id/etDearnessAllowance"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- National Holiday & Weekly Rest -->
+        <!-- Ceiling Limit -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ceiling Limit">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCeilingLimit"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Checkboxes -->
         <CheckBox
             android:id="@+id/cbNationalHoliday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="National Holiday"/>
+            android:text="National Holiday" />
 
         <CheckBox
             android:id="@+id/cbWeeklyRest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weekly Rest"/>
+            android:text="Weekly Rest" />
 
-        <!-- Action Buttons -->
-        <LinearLayout
+        <CheckBox
+            android:id="@+id/cbDualDuty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dual Duty (CR pending)" />
+
+        <CheckBox
+            android:id="@+id/cbDutyOnWeeklyRest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duty on Weekly Rest (CR pending)" />
+
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/btnCalculate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="12dp">
+            android:text="Calculate"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCalculate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Calculate"/>
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Record"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSave"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Save Record"/>
+        <Button
+            android:id="@+id/btnView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Record"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="View Record"/>
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btnExport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Export PDF"/>
+            android:text="Export PDF"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
 
-        <!-- Leave Management button (below Export PDF) -->
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btnLeaveManagement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Leave Management"/>
-        <!-- Results Section -->
-        <TextView
-            android:id="@+id/tvCeilingWarning"
+            android:text="Leave Management"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnClear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            android:text="⚠ Ceiling Limit Exceeded!"
-            android:layout_marginTop="8dp"/>
+            android:text="Clear"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
 
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Exit"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp" />
+
+        <!-- Results -->
         <LinearLayout
             android:id="@+id/llResults"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_marginTop="12dp"
-            android:background="@android:color/darker_gray">
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Results will appear here..."
-                android:textSize="16sp"
-                android:textColor="@android:color/black"/>
-        </LinearLayout>
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:padding="8dp"
+                android:background="#E0E0E0" />
 
-        <!-- Exit + Clear -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="12dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnClear"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvCeilingWarning"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Clear All"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnExit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Exit"/>
+                android:textColor="#D32F2F"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:padding="4dp" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>
