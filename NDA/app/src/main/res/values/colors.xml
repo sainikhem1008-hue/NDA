@@ -1,24 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Default colors -->
-    <color name="black">#000000</color>
+    <!-- Primary App Colors -->
+    <color name="primary_blue">#1976D2</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="primary_light">#BBDEFB</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_orange">#FF9800</color>
+    <color name="accent_green">#4CAF50</color>
+
+    <!-- Option Theme Colors -->
+    <color name="option_green">#388E3C</color>
+    <color name="light_option_green">#C8E6C9</color>
+
+    <!-- Neutral Colors -->
     <color name="white">#FFFFFF</color>
-    <color name="transparent">#00000000</color>
-
-    <!-- App Primary Theme Colors -->
-    <color name="primary_blue">#2196F3</color> <!-- Material Blue -->
-    <color name="primary_dark">#1976D2</color> <!-- Darker Blue -->
-    <color name="accent_orange">#FF9800</color> <!-- Accent Orange -->
-
-    <!-- UI Option Colors -->
-    <color name="option_green">#4CAF50</color> <!-- Option Green -->
-    <color name="light_option_green">#81C784</color> <!-- Lighter Green -->
-
-    <!-- Extra Theme Colors -->
+    <color name="black">#000000</color>
     <color name="gray_light">#F5F5F5</color>
-    <color name="gray_dark">#212121</color>
-    <color name="error_red">#F44336</color>
-    <color name="warning_yellow">#FFC107</color>
-    <color name="success_green">#388E3C</color>
-    <color name="info_blue">#03A9F4</color>
+    <color name="gray_dark">#616161</color>
+    <color name="divider">#BDBDBD</color>
+
+    <!-- Buttons / Status -->
+    <color name="success_green">#2E7D32</color>
+    <color name="error_red">#D32F2F</color>
+    <color name="warning_yellow">#FBC02D</color>
+    <color name="info_blue">#0288D1</color>
 </resources>
