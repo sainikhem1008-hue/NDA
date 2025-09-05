@@ -1,103 +1,68 @@
-name: Android Build
+name: Build Android APK & AAB with Gradle 7.6.3 and Java 17
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, cursor/* ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ANDROID_SDK_ROOT: $HOME/android-sdk
-      ANDROID_HOME: $HOME/android-sdk
+
+    defaults:
+      run:
+        working-directory: NDA-CALCULATOR   # 👈 Run inside project folder
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
-    - name: Set up JDK 17
+    - name: Set up Java 17
       uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: 'temurin'
+        java-version: '17'
 
-    - name: Install Android SDK Command-line Tools
-      run: |
-        set -e
-        echo "Installing Android cmdline-tools..."
-        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-
-        curl -sLo /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-
-        # Unzip into temp folder
-        mkdir -p /tmp/cmdline-tools
-        unzip -q /tmp/cmdtools.zip -d /tmp/cmdline-tools
-
-        # Move correct contents into .../latest/
-        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-        mv /tmp/cmdline-tools/cmdline-tools/* "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-
-        echo "Checking sdkmanager works..."
-        "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --version
-
-    - name: Accept Licenses and Install Android 33 packages
-      run: |
-        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
-        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
-          "platform-tools" \
-          "platforms;android-33" \
-          "build-tools;33.0.2"
-
-    - name: Create local.properties
-      working-directory: NDA
-      run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-
-    - name: Make gradlew executable
-      run: chmod +x ./NDA/gradlew
-
-    - name: Install Gradle 7.6.3
-      run: |
-        wget -q https://services.gradle.org/distributions/gradle-7.6.3-bin.zip
-        unzip -q gradle-7.6.3-bin.zip -d $HOME/gradle
-        echo "$HOME/gradle/gradle-7.6.3/bin" >> $GITHUB_PATH
-
-    - name: Show tool versions
-      working-directory: NDA
-      run: |
-        java -version
-        ./gradlew --version
-
-    - name: Build APK
-      working-directory: NDA
-      run: ./gradlew clean :app:assembleDebug --no-daemon --stacktrace --info --warning-mode all
-
-    - name: Copy debug APK to canonical path
-      run: |
-        set -e
-        found=$(ls -1 NDA/app/build/outputs/apk/debug/*.apk 2>/dev/null | grep -E 'app-debug.*\.apk$' | head -n 1 || true)
-        if [ -z "$found" ]; then
-          found=$(ls -1 NDA/app/build/outputs/apk/debug/*.apk 2>/dev/null | head -n 1 || true)
-        fi
-        if [ -n "$found" ]; then
-          if [ "$found" != "NDA/app/build/outputs/apk/debug/app-debug.apk" ]; then
-            cp "$found" NDA/app/build/outputs/apk/debug/app-debug.apk
-          fi
-        else
-          echo "No debug APK found to copy"
-        fi
-
-    - name: List build output files
-      run: |
-        echo "Listing APK/AAB outputs:"
-        find NDA/app/build/outputs -type f -maxdepth 8 -printf "%p\n" || echo "Build outputs folder not found"
-
-    - name: Upload APK artifact(s)
-      uses: actions/upload-artifact@v4
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
       with:
-        name: app-debug-artifacts
-        path: |
-          NDA/app/build/outputs/**/*.apk
-          NDA/app/build/outputs/**/*.aab
-        if-no-files-found: warn
+        sdk-platform: '34'
+        build-tools: '30.0.3'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 🟢 Clean before building so fresh artifacts are created
+    - name: Clean Project
+      run: ./gradlew clean
+
+    # ✅ Build Debug APK
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Upload Debug APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-debug
+        path: NDA-CALCULATOR/app/build/outputs/apk/debug/app-debug.apk
+
+    # ✅ Build Release APK
+    - name: Build Release APK
+      run: ./gradlew assembleRelease
+
+    - name: Upload Release APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release
+        path: NDA-CALCULATOR/app/build/outputs/apk/release/app-release.apk
+
+    # ✅ Build Release AAB (App Bundle)
+    - name: Build Release AAB
+      run: ./gradlew bundleRelease
+
+    - name: Upload Release AAB artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release-aab
+        path: NDA-CALCULATOR/app/build/outputs/bundle/release/app-release.aab
