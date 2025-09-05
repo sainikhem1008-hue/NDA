@@ -127,7 +127,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRecord() {
-    
+    if (currentCalculation == null) {
+        Toast.makeText(this, "Please calculate before saving!", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    String date = etDutyDate.getText().toString();
+    String start = etDutyFrom.getText().toString();
+    String end = etDutyTo.getText().toString();
+
+    double basicPay = 0.0;
+    double da = 0.0;
+    try {
+        basicPay = Double.parseDouble(etBasicPay.getText().toString());
+    } catch (NumberFormatException ignored) {}
+    try {
+        da = Double.parseDouble(etDearnessAllowance.getText().toString());
+    } catch (NumberFormatException ignored) {}
+
+    double nda = currentCalculation.getNdaAmount();
+
+    String dutyType = "";
+    if (cbDualDuty.isChecked()) {
+        dutyType = "Dual Duty (CR Pending)";
+    } else if (cbWeeklyRestDuty.isChecked()) {
+        dutyType = "Weekly Rest Duty (CR Pending)";
+    } else if (cbNationalHoliday.isChecked()) {
+        dutyType = "National Holiday Duty";
+    } else {
+        dutyType = "Normal Duty";
+    }
 
     // ✅ Save to SQLite Database
     boolean inserted = dbHelper.insertDuty(date, start, end, basicPay, da, nda, dutyType);
@@ -142,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
     dutyRecords.add(currentCalculation);
     persistDutyRecords();
     }
-
         double basicPay = Double.parseDouble(basicPayStr);
         double da = Double.parseDouble(daStr);
 
