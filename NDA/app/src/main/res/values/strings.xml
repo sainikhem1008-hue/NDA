@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">NDA CALCULATOR</string>
+    <string name="app_name">Night Duty Calculator</string>
     <string name="calculate">Calculate Allowance</string>
     <string name="save_record">Save Record</string>
-    <string name="export_pdf">Share Summary</string>
+    <string name="export_pdf">Export PDF</string>
     <string name="clear_all">Clear All</string>
     <string name="duty_date">Duty Date</string>
     <string name="duty_from">From Time</string>
@@ -17,4 +17,13 @@
     <string name="total_night_hours">Total Night Hours</string>
     <string name="effective_basic_pay">Effective Basic Pay</string>
     <string name="night_allowance">Night Duty Allowance</string>
+    <string name="weekly_rest">Weekly Rest</string>
+    <string name="leave_from">Leave From</string>
+    <string name="leave_to">Leave To</string>
+    <string name="type_of_leave">Type of Leave</string>
+    <string name="casual_leave">Casual Leave</string>
+    <string name="sick_leave">Sick Leave</string>
+    <string name="earned_leave">Earned Leave</string>
+    <string name="compensatory_off">Compensatory Off</string>
+    <string name="other_leave">Other Leave</string>
 </resources>
