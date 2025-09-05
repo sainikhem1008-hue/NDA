@@ -110,7 +110,61 @@
             android:layout_marginTop="12dp"
             android:padding="12dp"
             android:textStyle="bold" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDutyDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/duty_date" />
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDutyFrom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/duty_from" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDutyTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/duty_to" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDearnessAllowance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/dearness_allowance" />
+
+        <CheckBox
+            android:id="@+id/cbNationalHoliday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/national_holiday" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_all" />
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exit" />
+
+        <TextView
+            android:id="@+id/tvCeilingWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"
+            android:text="⚠ Using ceiling limit" />
+
+        <LinearLayout
+            android:id="@+id/llResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
         <!-- Leave Management Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLeaveManagement"
