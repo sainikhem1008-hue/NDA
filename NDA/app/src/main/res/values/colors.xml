@@ -11,4 +11,10 @@
     <!-- Custom colors used in leave management -->
     <color name="option_green">#4CAF50</color>
     <color name="light_option_green">#A5D6A7</color>
+    <color name="option_red">#F44336</color>
+    <color name="light_option_red">#EF9A9A</color>
+    <color name="option_blue">#2196F3</color>
+    <color name="light_option_blue">#90CAF9</color>
+    <color name="option_yellow">#FFEB3B</color>
+    <color name="light_option_yellow">#FFF59D</color>
 </resources>
