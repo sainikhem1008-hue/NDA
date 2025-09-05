@@ -21,10 +21,24 @@ public class DutyRecord {
     // ✅ NEW FIELD
     private boolean holidayAllowancePaid;
 
+    // ✅ Default constructor
     public DutyRecord() {
         this.id = System.currentTimeMillis();
     }
 
+    // ✅ NEW constructor (this fixes your MainActivity.java error)
+    public DutyRecord(String date, String dutyFrom, String dutyTo,
+                      double totalNightHours, double effectiveBasicPay, double nightDutyAllowance) {
+        this.id = System.currentTimeMillis();
+        this.date = date;
+        this.dutyFrom = dutyFrom;
+        this.dutyTo = dutyTo;
+        this.totalNightHours = totalNightHours;
+        this.effectiveBasicPay = effectiveBasicPay;
+        this.nightDutyAllowance = nightDutyAllowance;
+    }
+
+    // --- Getters & Setters ---
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
 
