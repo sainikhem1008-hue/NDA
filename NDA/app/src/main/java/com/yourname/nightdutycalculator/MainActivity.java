@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             if (basicPay > ceilingLimit) {
                 if (tvCeilingWarning != null) {
                     tvCeilingWarning.setVisibility(View.VISIBLE);
-                    tvCeilingWarning.setText("⚠ Using ceiling limit ₹" + decimalFormat.format(ceilingLimit));
+                    tvCeilingWarning.setText("âš  Using ceiling limit â‚¹" + decimalFormat.format(ceilingLimit));
                 }
             } else if (tvCeilingWarning != null) {
                 tvCeilingWarning.setVisibility(View.GONE);
@@ -217,13 +217,13 @@ public class MainActivity extends AppCompatActivity {
                             leaveToCal.setTime(sdf.parse(leaveRecord.getLeaveTo()));
                             if (!dutyDateCal.before(leaveFromCal) && !dutyDateCal.after(leaveToCal)) {
                                 isOnLeave = true;
-                                leaveStatus = "📅 On Leave (" + leaveRecord.getLeaveType() + ": " + leaveRecord.getLeaveFrom() + " to " + leaveRecord.getLeaveTo() + ")";
+                                leaveStatus = "ðŸ“… On Leave (" + leaveRecord.getLeaveType() + ": " + leaveRecord.getLeaveFrom() + " to " + leaveRecord.getLeaveTo() + ")";
                                 break;
                             }
                         }
                     }
-                    if (!isOnLeave && !leaveRecords.isEmpty()) leaveStatus = "📅 Leave Records Available";
-                } catch (Exception e) { isOnLeave = false; leaveStatus = "📅 Leave Check Error"; }
+                    if (!isOnLeave && !leaveRecords.isEmpty()) leaveStatus = "ðŸ“… Leave Records Available";
+                } catch (Exception e) { isOnLeave = false; leaveStatus = "ðŸ“… Leave Check Error"; }
             }
 
             // Duty hours and night hours calculation
@@ -282,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
         if (currentCalculation == null) return;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("📅 Date: ").append(currentCalculation.getDate()).append("\n");
-        sb.append("⏱ Duty Time: ").append(currentCalculation.getDutyFrom()).append(" - ").append(currentCalculation.getDutyTo()).append("\n");
+        sb.append("ðŸ“… Date: ").append(currentCalculation.getDate()).append("\n");
+        sb.append("â± Duty Time: ").append(currentCalculation.getDutyFrom()).append(" - ").append(currentCalculation.getDutyTo()).append("\n");
 
         if (currentCalculation.isWeeklyRest() || currentCalculation.isNationalHoliday() || currentCalculation.getLeaveStatus().contains("On Leave")) {
             sb.append("Status: ").append(currentCalculation.getLeaveStatus()).append("\n");
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             sb.append("Total Night Hours: ").append(String.format("%.2f", currentCalculation.getTotalNightHours())).append(" hrs\n");
-            sb.append("Night Duty Allowance: ₹").append(decimalFormat.format(currentCalculation.getNightDutyAllowance())).append("\n");
+            sb.append("Night Duty Allowance: â‚¹").append(decimalFormat.format(currentCalculation.getNightDutyAllowance())).append("\n");
         }
 
         tvResults.setText(sb.toString());
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     canvas.drawText("Total Night Hours: " + String.format("%.2f", record.getTotalNightHours()) + " hrs", leftMargin + 20, y, paint);
                     y += lineHeight;
-                    canvas.drawText("Night Duty Allowance: ₹" + decimalFormat.format(record.getNightDutyAllowance()), leftMargin + 20, y, paint);
+                    canvas.drawText("Night Duty Allowance: â‚¹" + decimalFormat.format(record.getNightDutyAllowance()), leftMargin + 20, y, paint);
 
                     totalNightHours += record.getTotalNightHours();
                     totalDutyHours += record.getTotalDutyHours();
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
             y += lineHeight;
             canvas.drawText("Total Night Duty Hours: " + String.format("%.2f", totalNightHours) + " hrs", leftMargin, y, paint);
             y += lineHeight;
-            canvas.drawText("Total Night Duty Allowance: ₹" + decimalFormat.format(totalAllowance), leftMargin, y, paint);
+            canvas.drawText("Total Night Duty Allowance: â‚¹" + decimalFormat.format(totalAllowance), leftMargin, y, paint);
             y += lineHeight;
             canvas.drawText("Total Records: " + recordCount, leftMargin, y, paint);
 
