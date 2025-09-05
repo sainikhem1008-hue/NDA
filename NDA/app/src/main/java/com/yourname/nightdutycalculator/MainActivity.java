@@ -127,6 +127,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRecord() {
+    
+
+    // ✅ Save to SQLite Database
+    boolean inserted = dbHelper.insertDuty(date, start, end, basicPay, da, nda, dutyType);
+
+    if (inserted) {
+        Toast.makeText(this, "Record saved to database!", Toast.LENGTH_SHORT).show();
+    } else {
+        Toast.makeText(this, "Failed to save record!", Toast.LENGTH_SHORT).show();
+    }
+
+    // ✅ Also keep in memory (for export/records dialog)
+    dutyRecords.add(currentCalculation);
+    persistDutyRecords();
+    }
+
+        double basicPay = Double.parseDouble(basicPayStr);
+        double da = Double.parseDouble(daStr);
+
+        // Total duty hours
+        int dutyHours = calculateDutyHours(startprivate void saveRecord() {
     if (currentCalculation == null) {
         Toast.makeText(this, "Please calculate before saving!", Toast.LENGTH_SHORT).show();
         return;
@@ -170,13 +191,7 @@ public class MainActivity extends AppCompatActivity {
     // ✅ Also keep in memory (for export/records dialog)
     dutyRecords.add(currentCalculation);
     persistDutyRecords();
-    }
-
-        double basicPay = Double.parseDouble(basicPayStr);
-        double da = Double.parseDouble(daStr);
-
-        // Total duty hours
-        int dutyHours = calculateDutyHours(startHour, startMinute, endHour, endMinute);
+        }Hour, startMinute, endHour, endMinute);
 
         // Night duty hours
         int nightDutyHours = calculateNightDutyHours(startHour, startMinute, endHour, endMinute);
