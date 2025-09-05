@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLeavePeriod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="25/12/2024 - 30/12/2024"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvLeaveStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Applied"
+                    android:textSize="12sp"
+                    android:background="@color/option_green"
+                    android:textColor="@color/white"
+                    android:padding="4dp"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLeaveType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Casual Leave"
+                android:textSize="12sp"
+                android:textColor="#666"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvLeaveNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Family function"
+                android:textSize="12sp"
+                android:textColor="#666"
+                android:layout_marginTop="2dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeleteLeave"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/accent_red"
+            android:text="🗑"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:minWidth="40dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
