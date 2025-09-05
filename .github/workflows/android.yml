@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: NDA-CALCULATOR   # 👈 Run inside project folder
+        working-directory: NDA  # 👈 Run inside project folder
 
     steps:
     - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: NDA-CALCULATOR/app/build/outputs/apk/debug/app-debug.apk
+        path: NDA/app/build/outputs/apk/debug/app-debug.apk
 
     # ✅ Build Release APK
     - name: Build Release APK
@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: NDA-CALCULATOR/app/build/outputs/apk/release/app-release.apk
+        path: NDA/app/build/outputs/apk/release/app-release.apk
 
     # ✅ Build Release AAB (App Bundle)
     - name: Build Release AAB
@@ -65,4 +65,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-release-aab
-        path: NDA-CALCULATOR/app/build/outputs/bundle/release/app-release.aab
+        path: NDA/app/build/outputs/bundle/release/app-release.aab
