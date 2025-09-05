@@ -42,7 +42,7 @@ jobs:
       run: ./gradlew assembleDebug
 
     - name: Upload Debug APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: NDA-CALCULATOR/app/build/outputs/apk/debug/app-debug.apk
@@ -52,7 +52,7 @@ jobs:
       run: ./gradlew assembleRelease
 
     - name: Upload Release APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-release
         path: NDA-CALCULATOR/app/build/outputs/apk/release/app-release.apk
@@ -62,7 +62,7 @@ jobs:
       run: ./gradlew bundleRelease
 
     - name: Upload Release AAB artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-release-aab
         path: NDA-CALCULATOR/app/build/outputs/bundle/release/app-release.aab
