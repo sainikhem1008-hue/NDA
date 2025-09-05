@@ -1,10 +1,14 @@
 <resources>
-    <color name="primary_blue">#3498db</color>
-    <color name="primary_dark">#2c3e50</color>
-    <color name="accent_green">#27ae60</color>
-    <color name="accent_orange">#f39c12</color>
-    <color name="accent_red">#e74c3c</color>
-    <color name="light_gray">#f8f9fa</color>
-    <color name="border_gray">#e9ecef</color>
+    <!-- Default colors -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Custom colors used in leave management -->
+    <color name="option_green">#4CAF50</color>
+    <color name="light_option_green">#A5D6A7</color>
 </resources>
