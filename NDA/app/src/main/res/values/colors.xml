@@ -1,20 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default colors -->
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
 
-    <!-- Custom colors used in leave management -->
-    <color name="option_green">#4CAF50</color>
-    <color name="light_option_green">#A5D6A7</color>
-    <color name="option_red">#F44336</color>
-    <color name="light_option_red">#EF9A9A</color>
-    <color name="option_blue">#2196F3</color>
-    <color name="light_option_blue">#90CAF9</color>
-    <color name="option_yellow">#FFEB3B</color>
-    <color name="light_option_yellow">#FFF59D</color>
+    <!-- App Primary Theme Colors -->
+    <color name="primary_blue">#2196F3</color> <!-- Material Blue -->
+    <color name="primary_dark">#1976D2</color> <!-- Darker Blue -->
+    <color name="accent_orange">#FF9800</color> <!-- Accent Orange -->
+
+    <!-- UI Option Colors -->
+    <color name="option_green">#4CAF50</color> <!-- Option Green -->
+    <color name="light_option_green">#81C784</color> <!-- Lighter Green -->
+
+    <!-- Extra Theme Colors -->
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_dark">#212121</color>
+    <color name="error_red">#F44336</color>
+    <color name="warning_yellow">#FFC107</color>
+    <color name="success_green">#388E3C</color>
+    <color name="info_blue">#03A9F4</color>
 </resources>
