@@ -102,7 +102,15 @@ public class MainActivity extends AppCompatActivity {
             @Override public void afterTextChanged(android.text.Editable s) { checkCeilingLimit(); }
         });
     }
-
+    private void loadDutyRecords() {
+    SharedPreferences prefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
+    String recordsJson = prefs.getString("duty_records", "[]");
+    Type recordListType = new TypeToken<List<DutyRecord>>() {}.getType();
+    dutyRecords = gson.fromJson(recordsJson, recordListType);
+    if (dutyRecords == null) {
+        dutyRecords = new ArrayList<>();
+    }
+    }
     private void checkCeilingLimit() {
         try {
             double basicPay = Double.parseDouble(etBasicPay.getText().toString());
