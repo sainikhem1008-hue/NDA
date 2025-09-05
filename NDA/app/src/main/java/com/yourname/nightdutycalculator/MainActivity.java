@@ -127,13 +127,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRecord() {
-        String basicPayStr = editTextBasicPay.getText().toString();
-        String daStr = editTextDA.getText().toString();
+    if (currentCalculation == null) {
+        Toast.makeText(this, "Please calculate before saving!", Toast.LENGTH_SHORT).show();
+        return;
+    }
 
-        if (basicPayStr.isEmpty() || daStr.isEmpty()) {
-            Toast.makeText(this, "Enter Basic Pay and DA", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    String date = etDutyDate.getText().toString();
+    String start = etDutyFrom.getText().toString();
+    String end = etDutyTo.getText().toString();
+
+    double basicPay = 0.0;
+    double da = 0.0;
+    try {
+        basicPay = Double.parseDouble(etBasicPay.getText().toString());
+    } catch (NumberFormatException ignored) {}
+    try {
+        da = Double.parseDouble(etDearnessAllowance.getText().toString());
+    } catch (NumberFormatException ignored) {}
+
+    double nda = currentCalculation.getNdaAmount();
+
+    String dutyType = "";
+    if (cbDualDuty.isChecked()) {
+        dutyType = "Dual Duty (CR Pending)";
+    } else if (cbWeeklyRestDuty.isChecked()) {
+        dutyType = "Weekly Rest Duty (CR Pending)";
+    } else if (cbNationalHoliday.isChecked()) {
+        dutyType = "National Holiday Duty";
+    } else {
+        dutyType = "Normal Duty";
+    }
+
+    // ✅ Save to SQLite Database
+    boolean inserted = dbHelper.insertDuty(date, start, end, basicPay, da, nda, dutyType);
+
+    if (inserted) {
+        Toast.makeText(this, "Record saved to database!", Toast.LENGTH_SHORT).show();
+    } else {
+        Toast.makeText(this, "Failed to save record!", Toast.LENGTH_SHORT).show();
+    }
+
+    // ✅ Also keep in memory (for export/records dialog)
+    dutyRecords.add(currentCalculation);
+    persistDutyRecords();
+    }
 
         double basicPay = Double.parseDouble(basicPayStr);
         double da = Double.parseDouble(daStr);
