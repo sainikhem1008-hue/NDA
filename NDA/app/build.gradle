@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace "com.yourname.nightdutycalculator"
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.yourname.nightdutycalculator"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
     }
