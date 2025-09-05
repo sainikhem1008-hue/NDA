@@ -132,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
         prefs.edit().putString("duty_records", gson.toJson(dutyRecords)).apply();
     }
-}
-    // --- CONTINUE of MainActivity class ---
+// --- CONTINUE of MainActivity class ---
 
     private void showDatePicker() {
         Calendar c = Calendar.getInstance();
