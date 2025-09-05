@@ -1,80 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Header -->
+        <!-- Duty Section -->
         <TextView
-            android:id="@+id/tvHeader"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NIGHT DUTY CALCULATOR"
-            android:gravity="center"
-            android:background="#2196F3"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:padding="12dp"
+            android:text="Duty Hours"
+            android:textColor="#2196F3"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:textSize="18sp"
+            android:paddingBottom="8dp" />
 
-        <!-- Duty date -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/startTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Duty Date">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDutyDate"
-                android:focusable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Start Time (HH:MM)"
+            android:focusable="false"
+            android:background="#E0E0E0"
+            android:padding="12dp" />
 
-        <!-- Duty from / to -->
-        <LinearLayout
-            android:orientation="horizontal"
+        <EditText
+            android:id="@+id/endTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Duty From">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDutyFrom"
-                    android:focusable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Duty To">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDutyTo"
-                    android:focusable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+            android:hint="End Time (HH:MM)"
+            android:focusable="false"
+            android:background="#E0E0E0"
+            android:padding="12dp"
+            android:layout_marginTop="8dp" />
 
         <!-- Quick Duty Buttons -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="8dp">
 
@@ -82,182 +51,144 @@
                 android:id="@+id/btnMorningDuty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Morning Duty (08-16)"
-                android:backgroundTint="#2196F3"
-                android:textColor="#FFFFFF"
-                android:layout_margin="4dp"/>
+                android:text="Morning (08-16)" />
 
             <Button
                 android:id="@+id/btnEveningDuty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Evening Duty (16-00)"
-                android:backgroundTint="#2196F3"
-                android:textColor="#FFFFFF"
-                android:layout_margin="4dp"/>
+                android:text="Evening (16-00)"
+                android:layout_marginStart="8dp" />
+
+            <Button
+                android:id="@+id/btnNightDuty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Night (00-08)"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnNightDuty"
+        <!-- Dual Duty Checkbox -->
+        <CheckBox
+            android:id="@+id/checkDualDuty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Night Duty (00-08)"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_margin="4dp"
-            android:layout_gravity="center"/>
+            android:text="Dual Duty"
+            android:layout_marginTop="8dp" />
 
-        <!-- Basic Pay -->
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Weekly Rest Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Rest"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <EditText
+            android:id="@+id/weeklyRestDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Basic Pay">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etBasicPay"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Select Weekly Rest Date"
+            android:focusable="false"
+            android:background="#E0E0E0"
+            android:padding="12dp" />
 
-        <!-- Dearness Allowance -->
-        <com.google.android.material.textfield.TextInputLayout
+        <CheckBox
+            android:id="@+id/checkWeeklyRestDuty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duty on Weekly Rest" />
+
+        <!-- CR Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Compensatory Rest (CR)"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <EditText
+            android:id="@+id/crDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Dearness Allowance (%)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDearnessAllowance"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Select CR Date"
+            android:focusable="false"
+            android:background="#E0E0E0"
+            android:padding="12dp" />
 
-        <!-- Ceiling Limit -->
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- NDA Calculation -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NDA Calculation"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <EditText
+            android:id="@+id/basicPay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ceiling Limit">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etCeilingLimit"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Basic Pay"
+            android:inputType="number"
+            android:background="#E0E0E0"
+            android:padding="12dp" />
 
-        <!-- Checkboxes -->
-        <CheckBox
-            android:id="@+id/cbNationalHoliday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="National Holiday" />
-
-        <CheckBox
-            android:id="@+id/cbWeeklyRest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weekly Rest" />
-
-        <CheckBox
-            android:id="@+id/cbDualDuty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dual Duty (CR pending)" />
-
-        <CheckBox
-            android:id="@+id/cbDutyOnWeeklyRest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Duty on Weekly Rest (CR pending)" />
-
-        <!-- Buttons -->
-        <Button
-            android:id="@+id/btnCalculate"
+        <EditText
+            android:id="@+id/dearnessAllowance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calculate"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="12dp" />
+            android:hint="Dearness Allowance"
+            android:inputType="number"
+            android:background="#E0E0E0"
+            android:padding="12dp"
+            android:layout_marginTop="8dp" />
 
+        <EditText
+            android:id="@+id/ndaHours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Total Night Duty Hours"
+            android:inputType="number"
+            android:background="#E0E0E0"
+            android:padding="12dp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/ndaResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NDA Result: --"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:paddingTop="8dp" />
+
+        <!-- Save & Export Buttons -->
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Record"
+            android:text="Save Duty Record"
+            android:layout_marginTop="16dp"
             android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Record"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnExport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Export PDF"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:text="Export to PDF"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF" />
 
-        <Button
-            android:id="@+id/btnLeaveManagement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Leave Management"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnClear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Clear"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnExit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exit"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
-
-        <!-- Results -->
-        <LinearLayout
-            android:id="@+id/llResults"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tvResults"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:padding="8dp"
-                android:background="#E0E0E0" />
-
-            <TextView
-                android:id="@+id/tvCeilingWarning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#D32F2F"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:padding="4dp" />
-        </LinearLayout>
     </LinearLayout>
 </ScrollView>
