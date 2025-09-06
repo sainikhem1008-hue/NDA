@@ -441,7 +441,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        if (r.isDualDuty()) {
+            y += 18;
+           canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
+           }
+        if (r.isDutyOnWeeklyRest()) {
+           y += 18;
+           canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
+           }
+        
         PdfDocument pdfDoc = new PdfDocument();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page page = pdfDoc.startPage(pageInfo);
