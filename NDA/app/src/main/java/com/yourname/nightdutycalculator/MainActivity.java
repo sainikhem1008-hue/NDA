@@ -40,14 +40,11 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private TextInputEditText etDutyDate, etDutyFrom, etDutyTo, etBasicPay, etCeilingLimit, etDearnessAllowance;
-    private CheckBox cbNationalHoliday, cbWeeklyRest;
+    private CheckBox cbNationalHoliday, cbWeeklyRest, cbDualDuty, cbDutyOnWeeklyRest;
     private MaterialButton btnCalculate, btnSave, btnViewRecord, btnExport, btnClear, btnExit, btnLeaveManagement;
-    // Declare quick duty buttons
+
     private MaterialButton btnMorningDuty, btnEveningDuty, btnNightDuty;
-    
-    private CheckBox cbDualDuty, cbDutyOnWeeklyRest;
-    
-    
+
     private TextView tvResults, tvCeilingWarning;
     private LinearLayout llResults;
 
@@ -62,11 +59,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // core utilities
         gson = new Gson();
         decimalFormat = new DecimalFormat("#,##0.00");
 
-        // find views (IDs must match activity_main.xml parts you pasted)
         etDutyDate = findViewById(R.id.etDutyDate);
         etDutyFrom = findViewById(R.id.etDutyFrom);
         etDutyTo = findViewById(R.id.etDutyTo);
@@ -76,14 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         cbNationalHoliday = findViewById(R.id.cbNationalHoliday);
         cbWeeklyRest = findViewById(R.id.cbWeeklyRest);
-
         cbDualDuty = findViewById(R.id.cbDualDuty);
         cbDutyOnWeeklyRest = findViewById(R.id.cbDutyOnWeeklyRest);
-        
 
-
-
-        
         btnCalculate = findViewById(R.id.btnCalculate);
         btnSave = findViewById(R.id.btnSave);
         btnViewRecord = findViewById(R.id.btnView);
@@ -97,37 +87,34 @@ public class MainActivity extends AppCompatActivity {
         btnNightDuty = findViewById(R.id.btnNightDuty);
 
         btnMorningDuty.setOnClickListener(v -> {
-         etDutyFrom.setText("08:00");
-         etDutyTo.setText("16:00");
-});
+            etDutyFrom.setText("08:00");
+            etDutyTo.setText("16:00");
+        });
 
         btnEveningDuty.setOnClickListener(v -> {
-         etDutyFrom.setText("16:00");
-         etDutyTo.setText("00:00");
-});
+            etDutyFrom.setText("16:00");
+            etDutyTo.setText("00:00");
+        });
 
         btnNightDuty.setOnClickListener(v -> {
-         etDutyFrom.setText("00:00");
-         etDutyTo.setText("08:00");
-});
+            etDutyFrom.setText("00:00");
+            etDutyTo.setText("08:00");
+        });
+
         tvResults = findViewById(R.id.tvResults);
         tvCeilingWarning = findViewById(R.id.tvCeilingWarning);
         llResults = findViewById(R.id.llResults);
 
-        // defaults
         etCeilingLimit.setText(String.valueOf(DEFAULT_CEILING));
         etDearnessAllowance.setText("0");
         setDefaultDateTimeValues();
 
-        // load existing records
         loadDutyRecords();
 
-        // pickers (date/time)
         etDutyDate.setOnClickListener(v -> showDatePicker());
         etDutyFrom.setOnClickListener(v -> showTimePicker(etDutyFrom));
         etDutyTo.setOnClickListener(v -> showTimePicker(etDutyTo));
 
-        // buttons
         btnCalculate.setOnClickListener(v -> calculateAndDisplay());
         btnSave.setOnClickListener(v -> saveRecord());
         btnViewRecord.setOnClickListener(v -> showRecordsDialog());
@@ -136,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         btnExit.setOnClickListener(v -> finish());
         btnLeaveManagement.setOnClickListener(v -> startActivity(new Intent(this, LeaveManagementActivity.class)));
 
-        // ceiling check on basic pay change
         etBasicPay.addTextChangedListener(new android.text.TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -163,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
         prefs.edit().putString("duty_records", gson.toJson(dutyRecords)).apply();
     }
-// --- CONTINUE of MainActivity class ---
 
     private void showDatePicker() {
         Calendar c = Calendar.getInstance();
@@ -178,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         new TimePickerDialog(this, (TimePicker view, int hourOfDay, int minute) -> {
             target.setText(String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute));
-        }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show(); // true -> 24h
+        }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
     }
 
     private void calculateAndDisplay() {
@@ -191,45 +176,15 @@ public class MainActivity extends AppCompatActivity {
             double daPercent = Double.parseDouble(etDearnessAllowance.getText().toString().trim());
             boolean isHoliday = cbNationalHoliday.isChecked();
             boolean isWeekly = cbWeeklyRest.isChecked();
+            boolean isDualDuty = cbDualDuty.isChecked();
+            boolean isDutyOnWeeklyRest = cbDutyOnWeeklyRest.isChecked();
 
-
-            if (isOnLeave) {
-    totalDutyHours = 0.0;
-    totalNightHours = 0.0;
-    holidayAllowancePaid = false;
-    nightDutyAllowance = 0.0;
-    allowanceStatus = "No Allowance (On Leave)";
-} else if (isWeekly) {
-    totalDutyHours = 0.0;
-    totalNightHours = 0.0;
-    holidayAllowancePaid = isHoliday;
-    nightDutyAllowance = 0.0;
-    allowanceStatus = isHoliday ? "Holiday Allowance (Weekly Rest)" : "No Allowance (Weekly Rest)";
-    if (isDutyOnWeeklyRest) {
-        allowanceStatus += " | Duty on Weekly Rest (CR pending)";
-    }
-} else {
-    if (isDualDuty) {
-        allowanceStatus = "Dual Duty (CR pending)";
-        // You can extend your UI and logic further later to support two duty intervals
-    } else {
-        if (isHoliday) holidayAllowancePaid = true;
-        if (totalNightHours > 0.0) {
-            double nightHoursDivided = totalNightHours / 6.0;
-            nightDutyAllowance = nightHoursDivided * (salaryWithDA) / 200.0;
-            allowanceStatus = "Calculated";
-        } else {
-            allowanceStatus = isHoliday ? "Holiday Allowance (No Night Hours)" : "No Night Hours";
-        }
-    }
-            }
-            
             if (dutyDate.isEmpty() || dutyFrom.isEmpty() || dutyTo.isEmpty()) {
                 Toast.makeText(this, "Please fill date/from/to", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // check leave records for this date
+            // Check leave records for this date
             boolean isOnLeave = false;
             String leaveStatus = "";
             SharedPreferences leavePrefs = getSharedPreferences("LeaveRecords", Context.MODE_PRIVATE);
@@ -256,11 +211,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // effective basic (apply ceiling)
             double effectiveBasic = Math.min(basicPay, ceiling);
             double salaryWithDA = effectiveBasic * (1 + daPercent / 100.0);
 
-            // parse times and build calendars
             String[] fromParts = dutyFrom.split(":");
             String[] toParts = dutyTo.split(":");
             Calendar fromCal = Calendar.getInstance();
@@ -270,49 +223,51 @@ public class MainActivity extends AppCompatActivity {
             fromCal.set(Calendar.MINUTE, Integer.parseInt(fromParts[1]));
             toCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(toParts[0]));
             toCal.set(Calendar.MINUTE, Integer.parseInt(toParts[1]));
-            if (!toCal.after(fromCal)) toCal.add(Calendar.DAY_OF_MONTH, 1); // across midnight
+            if (!toCal.after(fromCal)) toCal.add(Calendar.DAY_OF_MONTH, 1);
 
-            // compute total duty hours (day duty)
             double totalDutyHours = (toCal.getTimeInMillis() - fromCal.getTimeInMillis()) / (1000.0 * 60 * 60);
-
-            // compute night hours (22:00-00:00 & 00:00-06:00)
             double night1 = calculateNightHours(fromCal, toCal, 22, 0, 0, 0);
             double night2 = calculateNightHours(fromCal, toCal, 0, 0, 6, 0);
             double totalNightHours = night1 + night2;
 
-            // default results
             boolean holidayAllowancePaid = false;
             double nightDutyAllowance = 0.0;
             String allowanceStatus = "No Allowance";
 
-            // apply rules
             if (isOnLeave) {
-                // rule 3 & 4: on leave => no night allowance; holiday during leave => no holiday allowance
                 totalDutyHours = 0.0;
                 totalNightHours = 0.0;
                 holidayAllowancePaid = false;
                 nightDutyAllowance = 0.0;
                 allowanceStatus = "No Allowance (On Leave)";
             } else if (isWeekly) {
-                // rule 7 & 5: weekly rest => no duty hours counted; if weekly rest falls on holiday => holiday allowance paid
                 totalDutyHours = 0.0;
                 totalNightHours = 0.0;
                 holidayAllowancePaid = isHoliday;
                 nightDutyAllowance = 0.0;
                 allowanceStatus = isHoliday ? "Holiday Allowance (Weekly Rest)" : "No Allowance (Weekly Rest)";
+                if (isDutyOnWeeklyRest) {
+                    allowanceStatus += " | Duty on Weekly Rest (CR pending)";
+                }
             } else {
-                // normal duty day (could be holiday or not)
-                if (isHoliday) holidayAllowancePaid = true; // rule 1/2/5
-                if (totalNightHours > 0.0) {
-                    double nightHoursDivided = totalNightHours / 6.0;
-                    nightDutyAllowance = nightHoursDivided * (salaryWithDA) / 200.0;
-                    allowanceStatus = "Calculated";
+                if (isDualDuty) {
+                    allowanceStatus = "Dual Duty (CR pending)";
+                    if (totalNightHours > 0.0) {
+                        double nightHoursDivided = totalNightHours / 6.0;
+                        nightDutyAllowance = nightHoursDivided * (salaryWithDA) / 200.0;
+                    }
                 } else {
-                    allowanceStatus = isHoliday ? "Holiday Allowance (No Night Hours)" : "No Night Hours";
+                    if (isHoliday) holidayAllowancePaid = true;
+                    if (totalNightHours > 0.0) {
+                        double nightHoursDivided = totalNightHours / 6.0;
+                        nightDutyAllowance = nightHoursDivided * (salaryWithDA) / 200.0;
+                        allowanceStatus = "Calculated";
+                    } else {
+                        allowanceStatus = isHoliday ? "Holiday Allowance (No Night Hours)" : "No Night Hours";
+                    }
                 }
             }
 
-            // build and save currentCalculation
             currentCalculation = new DutyRecord();
             currentCalculation.setDate(dutyDate);
             currentCalculation.setDutyFrom(dutyFrom);
@@ -330,19 +285,10 @@ public class MainActivity extends AppCompatActivity {
             currentCalculation.setAllowanceStatus(allowanceStatus);
             currentCalculation.setLeaveStatus(leaveStatus);
             currentCalculation.setHolidayAllowancePaid(holidayAllowancePaid);
-
             currentCalculation.setDualDuty(isDualDuty);
             currentCalculation.setDutyOnWeeklyRest(isDutyOnWeeklyRest);
-            
-            
-            displayCurrentCalculation()
-                if (cbDualDuty.isChecked()) {
-                   sb.append("⚠ Dual Duty performed: CR pending\n");
-                   }
-                if (cbDutyOnWeeklyRest.isChecked()) {
-                   sb.append("⚠ Duty on Weekly Rest: CR pending\n");
-                  }
-            
+
+            displayCurrentCalculation();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // overlap calculation for a time window (handles window across midnight)
     private double calculateNightHours(Calendar fromCal, Calendar toCal, int startHour, int startMin, int endHour, int endMin) {
         Calendar nightStart = (Calendar) fromCal.clone();
         nightStart.set(Calendar.HOUR_OF_DAY, startHour);
@@ -382,6 +327,10 @@ public class MainActivity extends AppCompatActivity {
         sb.append("🎉 Holiday Allowance Paid: ").append(currentCalculation.isHolidayAllowancePaid() ? "Yes" : "No").append("\n");
         if (currentCalculation.getLeaveStatus() != null && !currentCalculation.getLeaveStatus().isEmpty())
             sb.append("📋 ").append(currentCalculation.getLeaveStatus()).append("\n");
+        if (cbDualDuty.isChecked())
+            sb.append("⚠ Dual Duty performed: CR pending\n");
+        if (cbDutyOnWeeklyRest.isChecked())
+            sb.append("⚠ Duty on Weekly Rest: CR pending\n");
 
         tvResults.setText(sb.toString());
         llResults.setVisibility(View.VISIBLE);
@@ -411,9 +360,13 @@ public class MainActivity extends AppCompatActivity {
             sb.append(idx++).append(". ").append(r.getDate())
               .append(" | ").append(r.getDutyFrom()).append("-").append(r.getDutyTo())
               .append(" | Night: ").append(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours())).append("h")
-              .append(" | NDA: ₹").append(decimalFormat.format(r.getNightDutyAllowance()))
-              .append(r.isHolidayAllowancePaid() ? " | Holiday Paid" : "")
-              .append("\n\n");
+              .append(" | NDA: ₹").append(decimalFormat.format(r.getNightDutyAllowance()));
+
+            if (r.isHolidayAllowancePaid()) sb.append(" | Holiday Paid");
+            if (r.isDualDuty()) sb.append(" | Dual Duty CR Pending");
+            if (r.isDutyOnWeeklyRest()) sb.append(" | Duty on Weekly Rest CR Pending");
+
+            sb.append("\n\n");
         }
         new AlertDialog.Builder(this)
                 .setTitle("Saved Records")
@@ -436,20 +389,13 @@ public class MainActivity extends AppCompatActivity {
             tvCeilingWarning.setVisibility(View.GONE);
         }
     }
+
     private void exportToPDF() {
         if (dutyRecords == null || dutyRecords.isEmpty()) {
             Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (r.isDualDuty()) {
-            y += 18;
-           canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
-           }
-        if (r.isDutyOnWeeklyRest()) {
-           y += 18;
-           canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
-           }
-        
+
         PdfDocument pdfDoc = new PdfDocument();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page page = pdfDoc.startPage(pageInfo);
@@ -496,6 +442,15 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawText(r.isHolidayAllowancePaid() ? "Yes" : "No", x + 440, y, paint);
             y += 18;
 
+            if (r.isDualDuty()) {
+                canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
+                y += 18;
+            }
+            if (r.isDutyOnWeeklyRest()) {
+                canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
+                y += 18;
+            }
+
             totalNightH += r.getTotalNightHours();
             totalNDA += r.getNightDutyAllowance();
         }
@@ -512,7 +467,43 @@ public class MainActivity extends AppCompatActivity {
         pdfDoc.finishPage(page);
 
         try {
-             File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
+            File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
+            FileOutputStream fos = new FileOutputStream(file);
+            pdfDoc.writeTo(fos);
+            pdfDoc.close();
+            fos.close();
+            canvas.drawText(dutyTime, x + 90, y, paint);
+            canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 240, y, paint);
+            canvas.drawText("₹" + decimalFormat.format(r.getNightDutyAllowance()), x + 330, y, paint);
+            canvas.drawText(r.isHolidayAllowancePaid() ? "Yes" : "No", x + 440, y, paint);
+            y += 18;
+
+            if (r.isDualDuty()) {
+                canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
+                y += 18;
+            }
+            if (r.isDutyOnWeeklyRest()) {
+                canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
+                y += 18;
+            }
+
+            totalNightH += r.getTotalNightHours();
+            totalNDA += r.getNightDutyAllowance();
+        }
+
+        y += 16;
+        canvas.drawText("SUMMARY", x, y, paint);
+        y += 18;
+        canvas.drawText("Total Night Hours: " + String.format(Locale.getDefault(), "%.2f", totalNightH) + " hrs", x, y, paint);
+        y += 18;
+        canvas.drawText("Total Night NDA: ₹" + decimalFormat.format(totalNDA), x, y, paint);
+        y += 18;
+        canvas.drawText("Total Records: " + dutyRecords.size(), x, y, paint);
+
+        pdfDoc.finishPage(page);
+
+        try {
+            File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
             FileOutputStream fos = new FileOutputStream(file);
             pdfDoc.writeTo(fos);
             pdfDoc.close();
@@ -539,9 +530,12 @@ public class MainActivity extends AppCompatActivity {
         etCeilingLimit.setText(String.valueOf(DEFAULT_CEILING));
         cbNationalHoliday.setChecked(false);
         cbWeeklyRest.setChecked(false);
+        cbDualDuty.setChecked(false);
+        cbDutyOnWeeklyRest.setChecked(false);
         tvResults.setText("");
         llResults.setVisibility(View.GONE);
         currentCalculation = null;
     }
+}
 
-} // end of MainActivity     
+            
