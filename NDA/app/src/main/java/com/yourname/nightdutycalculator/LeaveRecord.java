@@ -1,21 +1,45 @@
-erpackage com.yourname.nightdutycalculator;
+package com.yourname.nightdutycalculator;
 
 public class LeaveRecord {
-    private String leaveFrom;
-    private String leaveTo;
-    private String leaveType;
-    private String status;
+    private String date;   // Leave date
+    private String type;   // Leave type (Casual, Sick, etc.)
+    private String notes;  // Optional notes
 
-    // --- Getters & Setters ---
-    public String getLeaveFrom() { return leaveFrom; }
-    public void setLeaveFrom(String leaveFrom) { this.leaveFrom = leaveFrom; }
+    // Constructor with notes
+    public LeaveRecord(String date, String type, String notes) {
+        this.date = date;
+        this.type = type;
+        this.notes = notes;
+    }
 
-    public String getLeaveTo() { return leaveTo; }
-    public void setLeaveTo(String leaveTo) { this.leaveTo = leaveTo; }
+    // Constructor without notes (for flexibility)
+    public LeaveRecord(String date, String type) {
+        this(date, type, "");
+    }
 
-    public String getLeaveType() { return leaveType; }
-    public void setLeaveType(String leaveType) { this.leaveType = leaveType; }
+    // Getters
+    public String getDate() {
+        return date;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getType() {
+        return type;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    // Setters
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }
