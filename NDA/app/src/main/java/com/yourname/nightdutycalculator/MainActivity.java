@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     // Declare quick duty buttons
     private MaterialButton btnMorningDuty, btnEveningDuty, btnNightDuty;
     
+    private CheckBox cbDualDuty, cbDutyOnWeeklyRest;
     
     
     private TextView tvResults, tvCeilingWarning;
@@ -76,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         cbNationalHoliday = findViewById(R.id.cbNationalHoliday);
         cbWeeklyRest = findViewById(R.id.cbWeeklyRest);
 
+        cbDualDuty = findViewById(R.id.cbDualDuty);
+        cbDutyOnWeeklyRest = findViewById(R.id.cbDutyOnWeeklyRest);
+        
+
+
+
+        
         btnCalculate = findViewById(R.id.btnCalculate);
         btnSave = findViewById(R.id.btnSave);
         btnViewRecord = findViewById(R.id.btnView);
@@ -184,6 +192,38 @@ public class MainActivity extends AppCompatActivity {
             boolean isHoliday = cbNationalHoliday.isChecked();
             boolean isWeekly = cbWeeklyRest.isChecked();
 
+
+            if (isOnLeave) {
+    totalDutyHours = 0.0;
+    totalNightHours = 0.0;
+    holidayAllowancePaid = false;
+    nightDutyAllowance = 0.0;
+    allowanceStatus = "No Allowance (On Leave)";
+} else if (isWeekly) {
+    totalDutyHours = 0.0;
+    totalNightHours = 0.0;
+    holidayAllowancePaid = isHoliday;
+    nightDutyAllowance = 0.0;
+    allowanceStatus = isHoliday ? "Holiday Allowance (Weekly Rest)" : "No Allowance (Weekly Rest)";
+    if (isDutyOnWeeklyRest) {
+        allowanceStatus += " | Duty on Weekly Rest (CR pending)";
+    }
+} else {
+    if (isDualDuty) {
+        allowanceStatus = "Dual Duty (CR pending)";
+        // You can extend your UI and logic further later to support two duty intervals
+    } else {
+        if (isHoliday) holidayAllowancePaid = true;
+        if (totalNightHours > 0.0) {
+            double nightHoursDivided = totalNightHours / 6.0;
+            nightDutyAllowance = nightHoursDivided * (salaryWithDA) / 200.0;
+            allowanceStatus = "Calculated";
+        } else {
+            allowanceStatus = isHoliday ? "Holiday Allowance (No Night Hours)" : "No Night Hours";
+        }
+    }
+            }
+            
             if (dutyDate.isEmpty() || dutyFrom.isEmpty() || dutyTo.isEmpty()) {
                 Toast.makeText(this, "Please fill date/from/to", Toast.LENGTH_SHORT).show();
                 return;
@@ -291,7 +331,18 @@ public class MainActivity extends AppCompatActivity {
             currentCalculation.setLeaveStatus(leaveStatus);
             currentCalculation.setHolidayAllowancePaid(holidayAllowancePaid);
 
-            displayCurrentCalculation();
+            currentCalculation.setDualDuty(isDualDuty);
+            currentCalculation.setDutyOnWeeklyRest(isDutyOnWeeklyRest);
+            
+            
+            displayCurrentCalculation()
+                if (cbDualDuty.isChecked()) {
+                   sb.append("⚠ Dual Duty performed: CR pending\n");
+                   }
+                if (cbDutyOnWeeklyRest.isChecked()) {
+                   sb.append("⚠ Duty on Weekly Rest: CR pending\n");
+                  }
+            
 
         } catch (Exception e) {
             e.printStackTrace();
