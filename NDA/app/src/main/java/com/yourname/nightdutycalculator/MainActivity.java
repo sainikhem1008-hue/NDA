@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText etDutyDate, etDutyFrom, etDutyTo, etBasicPay, etCeilingLimit, etDearnessAllowance;
     private CheckBox cbNationalHoliday, cbWeeklyRest;
     private MaterialButton btnCalculate, btnSave, btnViewRecord, btnExport, btnClear, btnExit, btnLeaveManagement;
+    // Declare quick duty buttons
+    private MaterialButton btnMorningDuty, btnEveningDuty, btnNightDuty;
+    
+    
+    
     private TextView tvResults, tvCeilingWarning;
     private LinearLayout llResults;
 
