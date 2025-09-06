@@ -429,8 +429,8 @@ public class MainActivity extends AppCompatActivity {
 
         pdfDoc.finishPage(page);
 
-        try { 
-               File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
+        try {
+             File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
             FileOutputStream fos = new FileOutputStream(file);
             pdfDoc.writeTo(fos);
             pdfDoc.close();
@@ -462,5 +462,4 @@ public class MainActivity extends AppCompatActivity {
         currentCalculation = null;
     }
 
-} // end of MainActivity
-        
+} // end of MainActivity     
