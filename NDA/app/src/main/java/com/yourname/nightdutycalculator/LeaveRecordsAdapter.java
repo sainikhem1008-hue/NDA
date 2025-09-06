@@ -1,5 +1,5 @@
 package com.yourname.nightdutycalculator;
-import com.khem.nightdutycalculator.LeaveRecord;
+import com.yourname.nightdutycalculator.LeaveRecord;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
