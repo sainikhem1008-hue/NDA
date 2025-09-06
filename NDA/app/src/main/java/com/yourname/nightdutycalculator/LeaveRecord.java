@@ -1,35 +1,62 @@
-package com.khem.nightdutycalculator;
+package com.yourname.nightdutycalculator;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "leave_records")
 public class LeaveRecord {
-
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
-    private String date;
     private String leaveType;
-    private String remarks;
+    private String leaveFrom;
+    private String leaveTo;
+    private String status;
+    private String notes;
 
-    // Constructor
-    public LeaveRecord(String date, String leaveType, String remarks) {
-        this.date = date;
+    // --- Constructor ---
+    public LeaveRecord(String leaveType, String leaveFrom, String leaveTo, String status, String notes) {
         this.leaveType = leaveType;
-        this.remarks = remarks;
+        this.leaveFrom = leaveFrom;
+        this.leaveTo = leaveTo;
+        this.status = status;
+        this.notes = notes;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // --- Empty Constructor (needed for Gson/Room etc.) ---
+    public LeaveRecord() {}
 
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
+    // --- Getters & Setters ---
+    public String getLeaveType() {
+        return leaveType;
+    }
 
-    public String getLeaveType() { return leaveType; }
-    public void setLeaveType(String leaveType) { this.leaveType = leaveType; }
+    public void setLeaveType(String leaveType) {
+        this.leaveType = leaveType;
+    }
 
-    public String getRemarks() { return remarks; }
-    public void setRemarks(String remarks) { this.remarks = remarks; }
+    public String getLeaveFrom() {
+        return leaveFrom;
+    }
+
+    public void setLeaveFrom(String leaveFrom) {
+        this.leaveFrom = leaveFrom;
+    }
+
+    public String getLeaveTo() {
+        return leaveTo;
+    }
+
+    public void setLeaveTo(String leaveTo) {
+        this.leaveTo = leaveTo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }
