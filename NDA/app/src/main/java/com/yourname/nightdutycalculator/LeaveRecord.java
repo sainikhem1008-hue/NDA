@@ -1,62 +1,37 @@
 package com.yourname.nightdutycalculator;
 
 public class LeaveRecord {
-    private String leaveType;
+    private long id;
     private String leaveFrom;
     private String leaveTo;
-    private String status;
+    private String leaveType;
+    private String appliedDate;
+    private String status; // Applied, Approved, Rejected, Completed
     private String notes;
 
-    // --- Constructor ---
-    public LeaveRecord(String leaveType, String leaveFrom, String leaveTo, String status, String notes) {
-        this.leaveType = leaveType;
-        this.leaveFrom = leaveFrom;
-        this.leaveTo = leaveTo;
-        this.status = status;
-        this.notes = notes;
+    public LeaveRecord() { 
+        this.id = System.currentTimeMillis(); 
+        this.status = "Applied";
     }
 
-    // --- Empty Constructor (needed for Gson/Room etc.) ---
-    public LeaveRecord() {}
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-    // --- Getters & Setters ---
-    public String getLeaveType() {
-        return leaveType;
-    }
+    public String getLeaveFrom() { return leaveFrom; }
+    public void setLeaveFrom(String leaveFrom) { this.leaveFrom = leaveFrom; }
 
-    public void setLeaveType(String leaveType) {
-        this.leaveType = leaveType;
-    }
+    public String getLeaveTo() { return leaveTo; }
+    public void setLeaveTo(String leaveTo) { this.leaveTo = leaveTo; }
 
-    public String getLeaveFrom() {
-        return leaveFrom;
-    }
+    public String getLeaveType() { return leaveType; }
+    public void setLeaveType(String leaveType) { this.leaveType = leaveType; }
 
-    public void setLeaveFrom(String leaveFrom) {
-        this.leaveFrom = leaveFrom;
-    }
+    public String getAppliedDate() { return appliedDate; }
+    public void setAppliedDate(String appliedDate) { this.appliedDate = appliedDate; }
 
-    public String getLeaveTo() {
-        return leaveTo;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setLeaveTo(String leaveTo) {
-        this.leaveTo = leaveTo;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 }
