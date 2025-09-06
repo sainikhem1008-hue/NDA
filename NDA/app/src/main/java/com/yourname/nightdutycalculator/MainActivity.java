@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
         prefs.edit().putString("duty_records", gson.toJson(dutyRecords)).apply();
     }
-
+}
 // Part 2 — Calculation and Display
 
 private void calculateAndDisplay() {
@@ -361,4 +361,4 @@ private void exportToPDF() {
     }
 
     pdf.close();
-}
+}}
