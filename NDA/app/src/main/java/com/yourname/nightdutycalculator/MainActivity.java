@@ -375,85 +375,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void checkCeiling() {
-        try {
-            double basic = Double.parseDouble(etBasicPay.getText().toString());
-            double ceiling = Double.parseDouble(etCeilingLimit.getText().toString());
-            if (basic > ceiling) {
-                tvCeilingWarning.setVisibility(View.VISIBLE);
-                tvCeilingWarning.setText("⚠ Using ceiling ₹" + decimalFormat.format(ceiling));
-            } else {
-                tvCeilingWarning.setVisibility(View.GONE);
-            }
-        } catch (Exception e) {
-            tvCeilingWarning.setVisibility(View.GONE);
-        }
-    }
-
-    private void exportToPDF() {
-        if (dutyRecords == null || dutyRecords.isEmpty()) {
-            Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        PdfDocument pdfDoc = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = pdfDoc.startPage(pageInfo);
-        android.graphics.Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-        paint.setTextSize(12);
-
-        int x = 40;
-        int y = 40;
-
-        canvas.drawText("NIGHT DUTY ALLOWANCE REPORT", x, y, paint);
-        y += 25;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
-        y += 30;
-
-        // Header
-        canvas.drawText("Date", x, y, paint);
-        canvas.drawText("Duty (day)", x + 90, y, paint);
-        canvas.drawText("Night hrs", x + 240, y, paint);
-        canvas.drawText("Night NDA", x + 330, y, paint);
-        canvas.drawText("Holiday Paid", x + 440, y, paint);
-        y += 18;
-
-        double totalNightH = 0.0;
-        double totalNDA = 0.0;
-        int recCount = 0;
-
-        for (DutyRecord r : dutyRecords) {
-            recCount++;
-            if (y > 780) {
-                pdfDoc.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, recCount / 20 + 2).create();
-                page = pdfDoc.startPage(pageInfo);
-                canvas = page.getCanvas();
-                y = 40;
-            }
-
-            canvas.drawText(r.getDate(), x, y, paint);
-            String dutyTime = r.getDutyFrom() + " - " + r.getDutyTo();
-            canvas.drawText(dutyTime, x + 90, y, paint);
-            canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 240, y, paint);
-            canvas.drawText("₹" + decimalFormat.format(r.getNightDutyAllowance()), x + 330, y, paint);
-            canvas.drawText(r.isHolidayAllowancePaid() ? "Yes" : "No", x + 440, y, paint);
-            y += 18;
-
-            if (r.isDualDuty()) {
-                canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
-                y += 18;
-            }
-            if (r.isDutyOnWeeklyRest()) {
-                canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
-                y += 18;
-            }
-
-            totalNightH += r.getTotalNightHours();
-            totalNDA += r.getNightDutyAllowance();
-        }
+    
 
         y += 16;
         canvas.drawText("SUMMARY", x, y, paint);
@@ -538,4 +460,98 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-            
+        private void exportToPDF() {
+    if (dutyRecords == null || dutyRecords.isEmpty()) {
+        Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    PdfDocument pdfDoc = new PdfDocument();
+    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+    PdfDocument.Page page = pdfDoc.startPage(pageInfo);
+    android.graphics.Canvas canvas = page.getCanvas();
+    Paint paint = new Paint();
+    paint.setTextSize(12);
+
+    int x = 40;
+    int y = 40;
+
+    canvas.drawText("NIGHT DUTY ALLOWANCE REPORT", x, y, paint);
+    y += 25;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
+    y += 30;
+
+    // Header
+    canvas.drawText("Date", x, y, paint);
+    canvas.drawText("Duty (day)", x + 90, y, paint);
+    canvas.drawText("Night hrs", x + 240, y, paint);
+    canvas.drawText("Night NDA", x + 330, y, paint);
+    canvas.drawText("Holiday Paid", x + 440, y, paint);
+    y += 18;
+
+    double totalNightH = 0.0;
+    double totalNDA = 0.0;
+    int recCount = 0;
+
+    for (DutyRecord r : dutyRecords) {
+        recCount++;
+        if (y > 780) {
+            pdfDoc.finishPage(page);
+            pageInfo = new PdfDocument.PageInfo.Builder(595, 842, recCount / 20 + 2).create();
+            page = pdfDoc.startPage(pageInfo);
+            canvas = page.getCanvas();
+            y = 40;
+        }
+
+        canvas.drawText(r.getDate(), x, y, paint);
+        String dutyTime = r.getDutyFrom() + " - " + r.getDutyTo();
+        canvas.drawText(dutyTime, x + 90, y, paint);
+        canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 240, y, paint);
+        canvas.drawText("₹" + decimalFormat.format(r.getNightDutyAllowance()), x + 330, y, paint);
+        canvas.drawText(r.isHolidayAllowancePaid() ? "Yes" : "No", x + 440, y, paint);
+        y += 18;
+
+        if (r.isDualDuty()) {
+            canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
+            y += 18;
+        }
+        if (r.isDutyOnWeeklyRest()) {
+            canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
+            y += 18;
+        }
+
+        totalNightH += r.getTotalNightHours();
+        totalNDA += r.getNightDutyAllowance();
+    }
+
+    y += 16;
+    canvas.drawText("SUMMARY", x, y, paint);
+    y += 18;
+    canvas.drawText("Total Night Hours: " + String.format(Locale.getDefault(), "%.2f", totalNightH) + " hrs", x, y, paint);
+    y += 18;
+    canvas.drawText("Total Night NDA: ₹" + decimalFormat.format(totalNDA), x, y, paint);
+    y += 18;
+    canvas.drawText("Total Records: " + dutyRecords.size(), x, y, paint);
+
+    pdfDoc.finishPage(page);
+
+    try {
+        File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
+        FileOutputStream fos = new FileOutputStream(file);
+        pdfDoc.writeTo(fos);
+        pdfDoc.close();
+        fos.close();
+
+        Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(share, "Share PDF"));
+    } catch (IOException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+        }
+
