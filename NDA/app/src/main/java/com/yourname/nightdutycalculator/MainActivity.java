@@ -79,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
         btnExit = findViewById(R.id.btnExit);
         btnLeaveManagement = findViewById(R.id.btnLeaveManagement);
 
+        btnMorningDuty = findViewById(R.id.btnMorningDuty);
+        btnEveningDuty = findViewById(R.id.btnEveningDuty);
+        btnNightDuty = findViewById(R.id.btnNightDuty);
+
+        btnMorningDuty.setOnClickListener(v -> {
+         etDutyFrom.setText("08:00");
+         etDutyTo.setText("16:00");
+});
+
+        btnEveningDuty.setOnClickListener(v -> {
+         etDutyFrom.setText("16:00");
+         etDutyTo.setText("00:00");
+});
+
+        btnNightDuty.setOnClickListener(v -> {
+         etDutyFrom.setText("00:00");
+         etDutyTo.setText("08:00");
+});
         tvResults = findViewById(R.id.tvResults);
         tvCeilingWarning = findViewById(R.id.tvCeilingWarning);
         llResults = findViewById(R.id.llResults);
