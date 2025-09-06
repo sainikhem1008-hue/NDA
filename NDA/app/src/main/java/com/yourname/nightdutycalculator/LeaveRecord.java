@@ -1,65 +1,35 @@
-package com.yourname.nightdutycalculator;
+package com.khem.nightdutycalculator;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "leave_records")
 public class LeaveRecord {
-    private String leaveFrom;   // Leave start date
-    private String leaveTo;     // Leave end date
-    private String leaveType;   // Type of leave (e.g., Casual, Sick, etc.)
-    private String status;      // Applied / Approved / Rejected
-    private String notes;       // Optional notes
 
-    // Full constructor
-    public LeaveRecord(String leaveFrom, String leaveTo, String leaveType, String status, String notes) {
-        this.leaveFrom = leaveFrom;
-        this.leaveTo = leaveTo;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    private String date;
+    private String leaveType;
+    private String remarks;
+
+    // Constructor
+    public LeaveRecord(String date, String leaveType, String remarks) {
+        this.date = date;
         this.leaveType = leaveType;
-        this.status = status;
-        this.notes = notes;
+        this.remarks = remarks;
     }
 
-    // Constructor without notes
-    public LeaveRecord(String leaveFrom, String leaveTo, String leaveType, String status) {
-        this(leaveFrom, leaveTo, leaveType, status, "");
-    }
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    // Getters
-    public String getLeaveFrom() {
-        return leaveFrom;
-    }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
-    public String getLeaveTo() {
-        return leaveTo;
-    }
+    public String getLeaveType() { return leaveType; }
+    public void setLeaveType(String leaveType) { this.leaveType = leaveType; }
 
-    public String getLeaveType() {
-        return leaveType;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    // Setters
-    public void setLeaveFrom(String leaveFrom) {
-        this.leaveFrom = leaveFrom;
-    }
-
-    public void setLeaveTo(String leaveTo) {
-        this.leaveTo = leaveTo;
-    }
-
-    public void setLeaveType(String leaveType) {
-        this.leaveType = leaveType;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+    public String getRemarks() { return remarks; }
+    public void setRemarks(String remarks) { this.remarks = remarks; }
 }
