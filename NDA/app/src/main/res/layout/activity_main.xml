@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#EEEEEE">
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,12 +29,20 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Duty Date">
+            android:hint="Duty Date"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#2196F3"
+            android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDutyDate"
                 android:focusable="false"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:padding="8dp"
+                android:textColor="#000000" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Duty from / to -->
@@ -43,30 +51,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="2"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Duty From">
+                android:hint="Duty From"
+                android:background="#FFFFFF"
+                android:elevation="2dp"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#2196F3"
+                android:layout_marginEnd="4dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDutyFrom"
                     android:focusable="false"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="8dp"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Duty To">
+                android:hint="Duty To"
+                android:background="#FFFFFF"
+                android:elevation="2dp"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#2196F3"
+                android:layout_marginStart="4dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDutyTo"
                     android:focusable="false"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="8dp"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -76,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="8dp">
+            android:layout_marginBottom="12dp">
 
             <Button
                 android:id="@+id/btnMorningDuty"
@@ -105,68 +130,117 @@
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
             android:layout_margin="4dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"/>
 
         <!-- Basic Pay -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Basic Pay">
+            android:hint="Basic Pay"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#2196F3"
+            android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBasicPay"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:padding="8dp"
+                android:textColor="#000000" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Dearness Allowance -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Dearness Allowance (%)">
+            android:hint="Dearness Allowance (%)"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#2196F3"
+            android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDearnessAllowance"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:padding="8dp"
+                android:textColor="#000000" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Ceiling Limit -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ceiling Limit">
+            android:hint="Ceiling Limit"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#2196F3"
+            android:layout_marginBottom="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCeilingLimit"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:padding="8dp"
+                android:textColor="#000000" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Checkboxes -->
-        <CheckBox
-            android:id="@+id/cbNationalHoliday"
-            android:layout_width="wrap_content"
+        <!-- Checkboxes inside CardView for contrast -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="National Holiday" />
+            android:layout_marginBottom="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="#FFFFFF">
 
-        <CheckBox
-            android:id="@+id/cbWeeklyRest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weekly Rest" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp">
 
-        <CheckBox
-            android:id="@+id/cbDualDuty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dual Duty (CR pending)" />
+                <CheckBox
+                    android:id="@+id/cbNationalHoliday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="National Holiday"
+                    android:textColor="#222222"
+                    android:textSize="16sp"/>
 
-        <CheckBox
-            android:id="@+id/cbDutyOnWeeklyRest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Duty on Weekly Rest (CR pending)" />
+                <CheckBox
+                    android:id="@+id/cbWeeklyRest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly Rest"
+                    android:textColor="#222222"
+                    android:textSize="16sp"/>
+
+                <CheckBox
+                    android:id="@+id/cbDualDuty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dual Duty (CR pending)"
+                    android:textColor="#222222"
+                    android:textSize="16sp"/>
+
+                <CheckBox
+                    android:id="@+id/cbDutyOnWeeklyRest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duty on Weekly Rest (CR pending)"
+                    android:textColor="#222222"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Buttons -->
         <Button
@@ -176,7 +250,7 @@
             android:text="Calculate"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="12dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnSave"
@@ -185,7 +259,7 @@
             android:text="Save Record"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnView"
@@ -194,7 +268,7 @@
             android:text="View Record"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnExport"
@@ -203,7 +277,7 @@
             android:text="Export PDF"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnLeaveManagement"
@@ -212,7 +286,7 @@
             android:text="Leave Management"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnClear"
@@ -221,7 +295,7 @@
             android:text="Clear"
             android:backgroundTint="#2196F3"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnExit"
@@ -229,8 +303,7 @@
             android:layout_height="wrap_content"
             android:text="Exit"
             android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+            android:textColor="#FFFFFF" />
 
         <!-- Results -->
         <LinearLayout
@@ -247,7 +320,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textSize="14sp"
-                android:padding="8dp"
+                android:padding="12dp"
                 android:background="#E0E0E0" />
 
             <TextView
@@ -257,7 +330,7 @@
                 android:textColor="#D32F2F"
                 android:textStyle="bold"
                 android:visibility="gone"
-                android:padding="4dp" />
+                android:padding="8dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
