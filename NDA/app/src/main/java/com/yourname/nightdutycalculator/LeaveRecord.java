@@ -1,29 +1,41 @@
 package com.yourname.nightdutycalculator;
 
 public class LeaveRecord {
-    private String date;   // Leave date
-    private String type;   // Leave type (Casual, Sick, etc.)
-    private String notes;  // Optional notes
+    private String leaveFrom;   // Leave start date
+    private String leaveTo;     // Leave end date
+    private String leaveType;   // Type of leave (e.g., Casual, Sick, etc.)
+    private String status;      // Applied / Approved / Rejected
+    private String notes;       // Optional notes
 
-    // Constructor with notes
-    public LeaveRecord(String date, String type, String notes) {
-        this.date = date;
-        this.type = type;
+    // Full constructor
+    public LeaveRecord(String leaveFrom, String leaveTo, String leaveType, String status, String notes) {
+        this.leaveFrom = leaveFrom;
+        this.leaveTo = leaveTo;
+        this.leaveType = leaveType;
+        this.status = status;
         this.notes = notes;
     }
 
-    // Constructor without notes (for flexibility)
-    public LeaveRecord(String date, String type) {
-        this(date, type, "");
+    // Constructor without notes
+    public LeaveRecord(String leaveFrom, String leaveTo, String leaveType, String status) {
+        this(leaveFrom, leaveTo, leaveType, status, "");
     }
 
     // Getters
-    public String getDate() {
-        return date;
+    public String getLeaveFrom() {
+        return leaveFrom;
     }
 
-    public String getType() {
-        return type;
+    public String getLeaveTo() {
+        return leaveTo;
+    }
+
+    public String getLeaveType() {
+        return leaveType;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public String getNotes() {
@@ -31,12 +43,20 @@ public class LeaveRecord {
     }
 
     // Setters
-    public void setDate(String date) {
-        this.date = date;
+    public void setLeaveFrom(String leaveFrom) {
+        this.leaveFrom = leaveFrom;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setLeaveTo(String leaveTo) {
+        this.leaveTo = leaveTo;
+    }
+
+    public void setLeaveType(String leaveType) {
+        this.leaveType = leaveType;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setNotes(String notes) {
