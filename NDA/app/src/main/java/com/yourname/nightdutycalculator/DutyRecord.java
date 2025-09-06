@@ -1,6 +1,7 @@
 package com.yourname.nightdutycalculator;
 
 public class DutyRecord {
+    private long id;
     private String date;
     private String dutyFrom;
     private String dutyTo;
@@ -12,11 +13,30 @@ public class DutyRecord {
     private double effectiveBasicPay;
     private double dearnessAllowance;
     private double nightDutyAllowance;
-    private boolean nationalHoliday;
-    private boolean weeklyRest;
-    private boolean holidayAllowancePaid;
+    private boolean isNationalHoliday;
+    private boolean isWeeklyRest;
     private String allowanceStatus;
     private String leaveStatus;
+
+    // ✅ NEW FIELD
+    private boolean holidayAllowancePaid;
+
+    // ✅ Default constructor
+    public DutyRecord() {
+        this.id = System.currentTimeMillis();
+    }
+
+    // ✅ NEW constructor (this fixes your MainActivity.java error)
+    public DutyRecord(String date, String dutyFrom, String dutyTo,
+                      double totalNightHours, double effectiveBasicPay, double nightDutyAllowance) {
+        this.id = System.currentTimeMillis();
+        this.date = date;
+        this.dutyFrom = dutyFrom;
+        this.dutyTo = dutyTo;
+        this.totalNightHours = totalNightHours;
+        this.effectiveBasicPay = effectiveBasicPay;
+        this.nightDutyAllowance = nightDutyAllowance;
+    }
 
     // --- Getters & Setters ---
     public String getDate() { return date; }
@@ -52,18 +72,27 @@ public class DutyRecord {
     public double getNightDutyAllowance() { return nightDutyAllowance; }
     public void setNightDutyAllowance(double nightDutyAllowance) { this.nightDutyAllowance = nightDutyAllowance; }
 
-    public boolean isNationalHoliday() { return nationalHoliday; }
-    public void setNationalHoliday(boolean nationalHoliday) { this.nationalHoliday = nationalHoliday; }
+    public boolean isNationalHoliday() { return isNationalHoliday; }
+    public void setNationalHoliday(boolean nationalHoliday) { isNationalHoliday = nationalHoliday; }
 
-    public boolean isWeeklyRest() { return weeklyRest; }
-    public void setWeeklyRest(boolean weeklyRest) { this.weeklyRest = weeklyRest; }
-
-    public boolean isHolidayAllowancePaid() { return holidayAllowancePaid; }
-    public void setHolidayAllowancePaid(boolean holidayAllowancePaid) { this.holidayAllowancePaid = holidayAllowancePaid; }
+    public boolean isWeeklyRest() { return isWeeklyRest; }
+    public void setWeeklyRest(boolean weeklyRest) { isWeeklyRest = weeklyRest; }
 
     public String getAllowanceStatus() { return allowanceStatus; }
     public void setAllowanceStatus(String allowanceStatus) { this.allowanceStatus = allowanceStatus; }
 
     public String getLeaveStatus() { return leaveStatus; }
     public void setLeaveStatus(String leaveStatus) { this.leaveStatus = leaveStatus; }
+
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
+
+    // ✅ NEW METHODS
+    public boolean isHolidayAllowancePaid() {
+        return holidayAllowancePaid;
+    }
+
+    public void setHolidayAllowancePaid(boolean holidayAllowancePaid) {
+        this.holidayAllowancePaid = holidayAllowancePaid;
+    }
 }
