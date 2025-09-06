@@ -1,4 +1,4 @@
-package com.yourname.nightdutycalculator;
+erpackage com.yourname.nightdutycalculator;
 
 public class LeaveRecord {
     private String leaveFrom;
