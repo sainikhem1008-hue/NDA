@@ -6,73 +6,143 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "night_duty.db";
-    private static final int DB_VER = 1;
-    private static final String TABLE = "duty_records";
+import java.util.ArrayList;
+import java.util.List;
 
-    public DatabaseHelper(Context ctx) {
-        super(ctx, DB_NAME, null, DB_VER);
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private static final String DATABASE_NAME = "night_duty.db";
+    private static final int DATABASE_VERSION = 2;
+
+    // Duty Table
+    private static final String TABLE_DUTY = "duty_records";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_DATE = "date";
+    private static final String COLUMN_START = "start_time";
+    private static final String COLUMN_END = "end_time";
+    private static final String COLUMN_TOTAL = "total_hours";
+    private static final String COLUMN_NIGHT = "night_hours";
+
+    // Leave Table
+    private static final String TABLE_LEAVE = "leave_records";
+    private static final String COLUMN_LEAVE_ID = "leave_id";
+    private static final String COLUMN_LEAVE_FROM = "leave_from";
+    private static final String COLUMN_LEAVE_TO = "leave_to";
+    private static final String COLUMN_LEAVE_TYPE = "leave_type";
+    private static final String COLUMN_APPLIED_DATE = "applied_date";
+    private static final String COLUMN_STATUS = "status";
+    private static final String COLUMN_NOTES = "notes";
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE " + TABLE + " ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "date TEXT, start_time TEXT, end_time TEXT, "
-                + "total_hours REAL, night_hours REAL, basic_pay REAL, da REAL, "
-                + "nda REAL, holiday_paid INTEGER, allowance_status TEXT, "
-                + "weekly_rest INTEGER, weekly_rest_duty INTEGER, dual_duty INTEGER, leave_status TEXT, notes TEXT)";
-        db.execSQL(sql);
+        // ✅ Create Duty Table
+        String createDutyTable = "CREATE TABLE " + TABLE_DUTY + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_DATE + " TEXT,"
+                + COLUMN_START + " TEXT,"
+                + COLUMN_END + " TEXT,"
+                + COLUMN_TOTAL + " REAL,"
+                + COLUMN_NIGHT + " REAL"
+                + ")";
+        db.execSQL(createDutyTable);
+
+        // ✅ Create Leave Table
+        String createLeaveTable = "CREATE TABLE " + TABLE_LEAVE + "("
+                + COLUMN_LEAVE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_LEAVE_FROM + " TEXT,"
+                + COLUMN_LEAVE_TO + " TEXT,"
+                + COLUMN_LEAVE_TYPE + " TEXT,"
+                + COLUMN_APPLIED_DATE + " TEXT,"
+                + COLUMN_STATUS + " TEXT,"
+                + COLUMN_NOTES + " TEXT"
+                + ")";
+        db.execSQL(createLeaveTable);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DUTY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LEAVE);
         onCreate(db);
     }
 
-    // insert with full fields
-    public boolean insertDuty(String date, String start, String end,
-                              double totalHours, double nightHours,
-                              double basicPay, double da, double nda,
-                              boolean holidayPaid, String allowanceStatus,
-                              boolean weeklyRest, boolean weeklyRestDuty,
-                              boolean dualDuty, String leaveStatus, String notes) {
-        try {
-            SQLiteDatabase db = getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put("date", date);
-            cv.put("start_time", start);
-            cv.put("end_time", end);
-            cv.put("total_hours", totalHours);
-            cv.put("night_hours", nightHours);
-            cv.put("basic_pay", basicPay);
-            cv.put("da", da);
-            cv.put("nda", nda);
-            cv.put("holiday_paid", holidayPaid ? 1 : 0);
-            cv.put("allowance_status", allowanceStatus);
-            cv.put("weekly_rest", weeklyRest ? 1 : 0);
-            cv.put("weekly_rest_duty", weeklyRestDuty ? 1 : 0);
-            cv.put("dual_duty", dualDuty ? 1 : 0);
-            cv.put("leave_status", leaveStatus);
-            cv.put("notes", notes);
-            long id = db.insert(TABLE, null, cv);
-            db.close();
-            return id != -1;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public Cursor getAllDuties() {
-        SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE + " ORDER BY id DESC", null);
-    }
-
-    public void deleteDuty(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE, "id=?", new String[]{String.valueOf(id)});
+    // ✅ Insert Duty Record
+    public void insertDutyRecord(DutyRecord record) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_DATE, record.getDate());
+        values.put(COLUMN_START, record.getStartTime());
+        values.put(COLUMN_END, record.getEndTime());
+        values.put(COLUMN_TOTAL, record.getTotalHours());
+        values.put(COLUMN_NIGHT, record.getNightHours());
+        db.insert(TABLE_DUTY, null, values);
         db.close();
+    }
+
+    // ✅ Fetch Duty Records
+    public List<DutyRecord> getAllDutyRecords() {
+        List<DutyRecord> dutyList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DUTY, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DutyRecord record = new DutyRecord();
+                record.setId(cursor.getInt(0));
+                record.setDate(cursor.getString(1));
+                record.setStartTime(cursor.getString(2));
+                record.setEndTime(cursor.getString(3));
+                record.setTotalHours(cursor.getDouble(4));
+                record.setNightHours(cursor.getDouble(5));
+                dutyList.add(record);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return dutyList;
+    }
+
+    // ✅ Insert Leave Record
+    public void insertLeaveRecord(LeaveRecord record) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LEAVE_FROM, record.getLeaveFrom());
+        values.put(COLUMN_LEAVE_TO, record.getLeaveTo());
+        values.put(COLUMN_LEAVE_TYPE, record.getLeaveType());
+        values.put(COLUMN_APPLIED_DATE, record.getAppliedDate());
+        values.put(COLUMN_STATUS, record.getStatus());
+        values.put(COLUMN_NOTES, record.getNotes());
+        db.insert(TABLE_LEAVE, null, values);
+        db.close();
+    }
+
+    // ✅ Fetch Leave Records
+    public List<LeaveRecord> getAllLeaveRecords() {
+        List<LeaveRecord> leaveList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_LEAVE, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                LeaveRecord record = new LeaveRecord();
+                record.setId(cursor.getLong(0));
+                record.setLeaveFrom(cursor.getString(1));
+                record.setLeaveTo(cursor.getString(2));
+                record.setLeaveType(cursor.getString(3));
+                record.setAppliedDate(cursor.getString(4));
+                record.setStatus(cursor.getString(5));
+                record.setNotes(cursor.getString(6));
+                leaveList.add(record);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return leaveList;
     }
 }
