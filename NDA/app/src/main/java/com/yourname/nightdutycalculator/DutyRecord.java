@@ -15,40 +15,19 @@ public class DutyRecord {
     private double nightDutyAllowance;
     private boolean isNationalHoliday;
     private boolean isWeeklyRest;
+    private boolean dutyOnWeeklyRest;
+    private boolean dualDuty;
+    private boolean holidayAllowancePaid;
     private String allowanceStatus;
     private String leaveStatus;
 
-
-    private boolean isDualDuty;
-    private String secondDutyFrom;
-    private String secondDutyTo;
-    private double secondDutyHours;
-    private double secondDutyNightHours;
-    private double secondDutyNightAllowance;
-    private boolean isDutyOnWeeklyRest;
-    private boolean crPending;
-
-    // ✅ NEW FIELD
-    private boolean holidayAllowancePaid;
-
-    // ✅ Default constructor
     public DutyRecord() {
         this.id = System.currentTimeMillis();
     }
 
-    // ✅ NEW constructor (this fixes your MainActivity.java error)
-    public DutyRecord(String date, String dutyFrom, String dutyTo,
-                      double totalNightHours, double effectiveBasicPay, double nightDutyAllowance) {
-        this.id = System.currentTimeMillis();
-        this.date = date;
-        this.dutyFrom = dutyFrom;
-        this.dutyTo = dutyTo;
-        this.totalNightHours = totalNightHours;
-        this.effectiveBasicPay = effectiveBasicPay;
-        this.nightDutyAllowance = nightDutyAllowance;
-    }
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-    // --- Getters & Setters ---
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
 
@@ -88,48 +67,18 @@ public class DutyRecord {
     public boolean isWeeklyRest() { return isWeeklyRest; }
     public void setWeeklyRest(boolean weeklyRest) { isWeeklyRest = weeklyRest; }
 
+    public boolean isDutyOnWeeklyRest() { return dutyOnWeeklyRest; }
+    public void setDutyOnWeeklyRest(boolean dutyOnWeeklyRest) { this.dutyOnWeeklyRest = dutyOnWeeklyRest; }
+
+    public boolean isDualDuty() { return dualDuty; }
+    public void setDualDuty(boolean dualDuty) { this.dualDuty = dualDuty; }
+
+    public boolean isHolidayAllowancePaid() { return holidayAllowancePaid; }
+    public void setHolidayAllowancePaid(boolean holidayAllowancePaid) { this.holidayAllowancePaid = holidayAllowancePaid; }
+
     public String getAllowanceStatus() { return allowanceStatus; }
     public void setAllowanceStatus(String allowanceStatus) { this.allowanceStatus = allowanceStatus; }
 
     public String getLeaveStatus() { return leaveStatus; }
     public void setLeaveStatus(String leaveStatus) { this.leaveStatus = leaveStatus; }
-
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
-    public boolean isDualDuty() { return isDualDuty; }
-    
-    
-    
-    public void setDualDuty(boolean dualDuty) { isDualDuty = dualDuty; }
-
-    public String getSecondDutyFrom() { return secondDutyFrom; }
-    public void setSecondDutyFrom(String secondDutyFrom) { this.secondDutyFrom = secondDutyFrom; }
-
-    public String getSecondDutyTo() { return secondDutyTo; }
-    public void setSecondDutyTo(String secondDutyTo) { this.secondDutyTo = secondDutyTo; }
-
-    public double getSecondDutyHours() { return secondDutyHours; }
-    public void setSecondDutyHours(double secondDutyHours) { this.secondDutyHours = secondDutyHours; }
-
-    public double getSecondDutyNightHours() { return secondDutyNightHours; }
-    public void setSecondDutyNightHours(double secondDutyNightHours) { this.secondDutyNightHours = secondDutyNightHours; }
-
-    public double getSecondDutyNightAllowance() { return secondDutyNightAllowance; }
-    public void setSecondDutyNightAllowance(double secondDutyNightAllowance) { this.secondDutyNightAllowance = secondDutyNightAllowance; }
-
-    public boolean isDutyOnWeeklyRest() { return isDutyOnWeeklyRest; }
-    public void setDutyOnWeeklyRest(boolean dutyOnWeeklyRest) { isDutyOnWeeklyRest = dutyOnWeeklyRest; }
-
-    public boolean isCrPending() { return crPending; }
-    public void setCrPending(boolean crPending) { this.crPending = crPending; }
-    
-
-    // ✅ NEW METHODS
-    public boolean isHolidayAllowancePaid() {
-        return holidayAllowancePaid;
-    }
-
-    public void setHolidayAllowancePaid(boolean holidayAllowancePaid) {
-        this.holidayAllowancePaid = holidayAllowancePaid;
-    }
 }
