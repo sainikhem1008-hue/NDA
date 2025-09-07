@@ -3,12 +3,12 @@ package com.yourname.nightdutycalculator;
 public class DutyRecord {
     private long id;
     private String date;
-    private String dutyFrom;
-    private String dutyTo;
-    private double totalDutyHours;
+    private String dutyFrom;       // previously "start time"
+    private String dutyTo;         // previously "end time"
+    private double totalDutyHours; // previously "totalHours"
     private double nightHours1;
     private double nightHours2;
-    private double totalNightHours;
+    private double totalNightHours; // previously "nightHours"
     private double basicPay;
     private double effectiveBasicPay;
     private double dearnessAllowance;
@@ -25,6 +25,7 @@ public class DutyRecord {
         this.id = System.currentTimeMillis();
     }
 
+    // --- canonical getters/setters ---
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
@@ -81,4 +82,19 @@ public class DutyRecord {
 
     public String getLeaveStatus() { return leaveStatus; }
     public void setLeaveStatus(String leaveStatus) { this.leaveStatus = leaveStatus; }
+
+    // --- ALIAS methods to preserve compatibility with older code (DatabaseHelper, adapters, etc.) ---
+    // Start/End aliases
+    public String getStartTime() { return dutyFrom; }
+    public void setStartTime(String start) { this.dutyFrom = start; }
+
+    public String getEndTime() { return dutyTo; }
+    public void setEndTime(String end) { this.dutyTo = end; }
+
+    // Total / Night alias names
+    public double getTotalHours() { return totalDutyHours; }
+    public void setTotalHours(double h) { this.totalDutyHours = h; }
+
+    public double getNightHours() { return totalNightHours; }
+    public void setNightHours(double h) { this.totalNightHours = h; }
 }
