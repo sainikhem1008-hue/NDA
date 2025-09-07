@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout llResults;
 
     private List<DutyRecord> dutyRecords;
+    private List<LeaveRecord> leaveRecords = new ArrayList<>();
     private DutyRecord currentCalculation;
     private Gson gson;
     private DecimalFormat decimalFormat;
