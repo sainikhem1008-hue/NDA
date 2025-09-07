@@ -195,119 +195,137 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
     }
 
     // ---------- Export leave + duty PDF ----------
-    private void exportLeaveAndDutyPDF() {
-        // load duty records from shared prefs the same way main activity stores them
-        SharedPreferences dutyPrefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
-        String dutyJson = dutyPrefs.getString("duty_records", "[]");
-        Type dutyListType = new TypeToken<List<DutyRecord>>(){}.getType();
-        List<DutyRecord> dutyList = gson.fromJson(dutyJson, dutyListType);
-        if (dutyList == null) dutyList = new ArrayList<>();
+    // ---------- Export leave + duty PDF ----------
+private void exportLeaveAndDutyPDF() {
+    SharedPreferences dutyPrefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
+    String dutyJson = dutyPrefs.getString("duty_records", "[]");
+    Type dutyListType = new TypeToken<List<DutyRecord>>(){}.getType();
+    List<DutyRecord> dutyList = gson.fromJson(dutyJson, dutyListType);
+    if (dutyList == null) dutyList = new ArrayList<>();
 
-        // leaveRecords already loaded
-        if ((dutyList == null || dutyList.isEmpty()) && (leaveRecords == null || leaveRecords.isEmpty())) {
-            Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    if ((dutyList == null || dutyList.isEmpty()) && (leaveRecords == null || leaveRecords.isEmpty())) {
+        Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
+        return;
+    }
 
-        PdfDocument pdfDoc = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = pdfDoc.startPage(pageInfo);
-        android.graphics.Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-        paint.setTextSize(12);
+    PdfDocument pdfDoc = new PdfDocument();
+    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+    PdfDocument.Page page = pdfDoc.startPage(pageInfo);
+    android.graphics.Canvas canvas = page.getCanvas();
+    Paint paint = new Paint();
+    paint.setTextSize(12);
 
-        int x = 40;
-        int y = 40;
-        canvas.drawText("LEAVE & DUTY REPORT", x, y, paint);
-        y += 22;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
-        y += 26;
+    int x = 40;
+    int y = 40;
+    canvas.drawText("LEAVE & DUTY REPORT", x, y, paint);
+    y += 22;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
+    y += 26;
 
-        // Duty section
-        if (dutyList != null && !dutyList.isEmpty()) {
-            canvas.drawText("---- Duty Records ----", x, y, paint);
-            y += 18;
-            canvas.drawText("Date", x, y, paint);
-            canvas.drawText("Duty", x + 100, y, paint);
-            canvas.drawText("TotalHrs", x + 260, y, paint);
-            canvas.drawText("NightHrs", x + 330, y, paint);
-            canvas.drawText("NDA", x + 410, y, paint);
-            y += 16;
+    // Duty section (unchanged)
+    if (dutyList != null && !dutyList.isEmpty()) {
+        canvas.drawText("---- Duty Records ----", x, y, paint);
+        y += 18;
+        canvas.drawText("Date", x, y, paint);
+        canvas.drawText("Duty", x + 100, y, paint);
+        canvas.drawText("TotalHrs", x + 260, y, paint);
+        canvas.drawText("NightHrs", x + 330, y, paint);
+        canvas.drawText("NDA", x + 410, y, paint);
+        y += 16;
 
-            for (DutyRecord r : dutyList) {
-                if (y > 760) {
-                    pdfDoc.finishPage(page);
-                    pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 2).create();
-                    page = pdfDoc.startPage(pageInfo);
-                    canvas = page.getCanvas();
-                    y = 40;
-                }
-                canvas.drawText(r.getDate(), x, y, paint);
-                canvas.drawText((r.getDutyFrom() == null ? "-" : r.getDutyFrom()) + " - " + (r.getDutyTo() == null ? "-" : r.getDutyTo()), x + 100, y, paint);
-                canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalDutyHours()), x + 260, y, paint);
-                canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 330, y, paint);
-                canvas.drawText("₹" + (r.getNightDutyAllowance() == 0.0 ? "0.00" : String.format(Locale.getDefault(), "%.2f", r.getNightDutyAllowance())), x + 410, y, paint);
-                y += 16;
-            }
-            y += 12;
-        }
-
-        // Leave section
-        if (leaveRecords != null && !leaveRecords.isEmpty()) {
-            if (y > 700) {
+        for (DutyRecord r : dutyList) {
+            if (y > 760) {
                 pdfDoc.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 3).create();
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
                 page = pdfDoc.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 40;
             }
-            canvas.drawText("---- Leave Records ----", x, y, paint);
-            y += 18;
-            canvas.drawText("From - To", x, y, paint);
-            canvas.drawText("Type", x + 160, y, paint);
-            canvas.drawText("Status", x + 300, y, paint);
-            canvas.drawText("Notes", x + 380, y, paint);
+            canvas.drawText(r.getDate(), x, y, paint);
+            canvas.drawText((r.getDutyFrom() == null ? "-" : r.getDutyFrom()) + " - " + (r.getDutyTo() == null ? "-" : r.getDutyTo()), x + 100, y, paint);
+            canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalDutyHours()), x + 260, y, paint);
+            canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 330, y, paint);
+            canvas.drawText("₹" + (r.getNightDutyAllowance() == 0.0 ? "0.00" : String.format(Locale.getDefault(), "%.2f", r.getNightDutyAllowance())), x + 410, y, paint);
+            y += 16;
+        }
+        y += 12;
+    }
+
+    // Leave section
+    if (leaveRecords != null && !leaveRecords.isEmpty()) {
+        if (y > 700) {
+            pdfDoc.finishPage(page);
+            pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
+            page = pdfDoc.startPage(pageInfo);
+            canvas = page.getCanvas();
+            y = 40;
+        }
+        canvas.drawText("---- Leave Records ----", x, y, paint);
+        y += 18;
+        canvas.drawText("From - To", x, y, paint);
+        canvas.drawText("Type", x + 160, y, paint);
+        canvas.drawText("Status", x + 300, y, paint);
+        canvas.drawText("Notes", x + 380, y, paint);
+        y += 16;
+
+        // To calculate total leave days and types
+        int totalLeaveDays = 0;
+        List<String> leaveTypes = new ArrayList<>();
+        for (LeaveRecord lr : leaveRecords) {
+            if (y > 760) {
+                pdfDoc.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
+                page = pdfDoc.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = 40;
+            }
+            canvas.drawText(lr.getLeaveFrom() + " - " + lr.getLeaveTo(), x, y, paint);
+            canvas.drawText(lr.getLeaveType(), x + 160, y, paint);
+            canvas.drawText(lr.getStatus(), x + 300, y, paint);
+            if (lr.getNotes() != null && !lr.getNotes().trim().isEmpty()) {
+                canvas.drawText(lr.getNotes(), x + 380, y, paint);
+            }
             y += 16;
 
-            for (LeaveRecord lr : leaveRecords) {
-                if (y > 760) {
-                    pdfDoc.finishPage(page);
-                    pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 4).create();
-                    page = pdfDoc.startPage(pageInfo);
-                    canvas = page.getCanvas();
-                    y = 40;
+            // Calculate leave days
+            try {
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                Date fromDate = sdfDate.parse(lr.getLeaveFrom());
+                Date toDate = sdfDate.parse(lr.getLeaveTo());
+                if (fromDate != null && toDate != null) {
+                    long diff = toDate.getTime() - fromDate.getTime();
+                    int days = (int) (diff / (1000 * 60 * 60 * 24)) + 1; // inclusive
+                    totalLeaveDays += days;
                 }
-                canvas.drawText(lr.getLeaveFrom() + " - " + lr.getLeaveTo(), x, y, paint);
-                canvas.drawText(lr.getLeaveType(), x + 160, y, paint);
-                canvas.drawText(lr.getStatus(), x + 300, y, paint);
-                if (lr.getNotes() != null && !lr.getNotes().trim().isEmpty()) {
-                    canvas.drawText(lr.getNotes(), x + 380, y, paint);
-                }
-                y += 16;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            y += 12;
-            canvas.drawText("Total Leaves: " + leaveRecords.size(), x, y, paint);
+            if (!leaveTypes.contains(lr.getLeaveType())) {
+                leaveTypes.add(lr.getLeaveType());
+            }
         }
+        y += 12;
+        canvas.drawText("Total Leaves: " + totalLeaveDays + " days, Types: " + String.join(", ", leaveTypes), x, y, paint);
+    }
 
-        pdfDoc.finishPage(page);
+    pdfDoc.finishPage(page);
 
-        try {
-            File file = new File(getExternalFilesDir(null), "leave_and_duty_report.pdf");
-            FileOutputStream fos = new FileOutputStream(file);
-            pdfDoc.writeTo(fos);
-            pdfDoc.close();
-            fos.close();
+    try {
+        File file = new File(getExternalFilesDir(null), "leave_and_duty_report.pdf");
+        FileOutputStream fos = new FileOutputStream(file);
+        pdfDoc.writeTo(fos);
+        pdfDoc.close();
+        fos.close();
 
-            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
-            Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("application/pdf");
-            share.putExtra(Intent.EXTRA_STREAM, uri);
-            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(share, "Share PDF"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(share, "Share PDF"));
+    } catch (IOException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }
