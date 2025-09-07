@@ -4,10 +4,15 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.View;
 import android.widget.Toast;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,13 +24,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.TextAlignment;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ import java.util.Locale;
 public class LeaveManagementActivity extends AppCompatActivity implements LeaveRecordsAdapter.OnLeaveDeleteListener {
 
     private TextInputEditText etLeaveFromDate, etLeaveToDate, etLeaveTypeSelection, etLeaveNotes;
-    private MaterialButton btnApplyLeave, btnExportPDF;
+    private MaterialButton btnApplyLeave;
+    private MaterialButton btnExportPDF; // optional - only if layout provides it
     private RecyclerView rvLeaveRecords;
     private List<LeaveRecord> leaveRecords = new ArrayList<>();
     private LeaveRecordsAdapter adapter;
@@ -62,8 +65,15 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
         etLeaveTypeSelection = findViewById(R.id.etLeaveTypeSelection);
         etLeaveNotes = findViewById(R.id.etLeaveNotes);
         btnApplyLeave = findViewById(R.id.btnApplyLeave);
-        btnExportPDF = findViewById(R.id.btnExportPDF);
         rvLeaveRecords = findViewById(R.id.rvLeaveRecords);
+
+        // optional export button - safe if not present in layout
+        View maybeExport = findViewById(R.id.btnExportPDF);
+        if (maybeExport instanceof MaterialButton) {
+            btnExportPDF = (MaterialButton) maybeExport;
+        } else {
+            btnExportPDF = null;
+        }
 
         sharedPreferences = getSharedPreferences("LeaveRecords", Context.MODE_PRIVATE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -81,7 +91,10 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
             vibrate();
             applyLeave();
         });
-        btnExportPDF.setOnClickListener(v -> exportToPdf());
+
+        if (btnExportPDF != null) {
+            btnExportPDF.setOnClickListener(v -> exportLeaveAndDutyPDF());
+        }
     }
 
     private void showDatePicker(TextInputEditText editText) {
@@ -96,18 +109,18 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
 
     private void showLeaveTypeDialog() {
         String[] leaveTypes = {
-                getString(R.string.casual_leave),
-                getString(R.string.sick_leave),
-                getString(R.string.earned_leave),
-                getString(R.string.compensatory_off),
-                getString(R.string.other_leave)
+            getString(R.string.casual_leave),
+            getString(R.string.sick_leave),
+            getString(R.string.earned_leave),
+            getString(R.string.compensatory_off),
+            getString(R.string.other_leave)
         };
 
-        new AlertDialog.Builder(this)
-                .setTitle("Select Type of Leave")
-                .setItems(leaveTypes, (dialog, which) -> etLeaveTypeSelection.setText(leaveTypes[which]))
-                .setNegativeButton("Cancel", null)
-                .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Type of Leave")
+               .setItems(leaveTypes, (dialog, which) -> etLeaveTypeSelection.setText(leaveTypes[which]))
+               .setNegativeButton("Cancel", null)
+               .show();
     }
 
     private void applyLeave() {
@@ -163,16 +176,16 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
     @Override
     public void onLeaveDelete(LeaveRecord record, int position) {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Leave Application")
-                .setMessage("Are you sure you want to delete this leave application?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    leaveRecords.remove(position);
-                    saveLeaveRecords();
-                    if (adapter != null) adapter.notifyItemRemoved(position);
-                    Toast.makeText(this, "Leave application deleted", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("No", null)
-                .show();
+            .setTitle("Delete Leave Application")
+            .setMessage("Are you sure you want to delete this leave application?")
+            .setPositiveButton("Yes", (dialog, which) -> {
+                leaveRecords.remove(position);
+                saveLeaveRecords();
+                if (adapter != null) adapter.notifyItemRemoved(position);
+                Toast.makeText(this, "Leave application deleted", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("No", null)
+            .show();
     }
 
     private void vibrate() {
@@ -181,88 +194,120 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
         }
     }
 
-    // ==============================
-    // PDF Export (with Summary)
-    // ==============================
-    private void exportToPdf() {
+    // ---------- Export leave + duty PDF ----------
+    private void exportLeaveAndDutyPDF() {
+        // load duty records from shared prefs the same way main activity stores them
+        SharedPreferences dutyPrefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
+        String dutyJson = dutyPrefs.getString("duty_records", "[]");
+        Type dutyListType = new TypeToken<List<DutyRecord>>(){}.getType();
+        List<DutyRecord> dutyList = gson.fromJson(dutyJson, dutyListType);
+        if (dutyList == null) dutyList = new ArrayList<>();
+
+        // leaveRecords already loaded
+        if ((dutyList == null || dutyList.isEmpty()) && (leaveRecords == null || leaveRecords.isEmpty())) {
+            Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PdfDocument pdfDoc = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.Page page = pdfDoc.startPage(pageInfo);
+        android.graphics.Canvas canvas = page.getCanvas();
+        Paint paint = new Paint();
+        paint.setTextSize(12);
+
+        int x = 40;
+        int y = 40;
+        canvas.drawText("LEAVE & DUTY REPORT", x, y, paint);
+        y += 22;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
+        y += 26;
+
+        // Duty section
+        if (dutyList != null && !dutyList.isEmpty()) {
+            canvas.drawText("---- Duty Records ----", x, y, paint);
+            y += 18;
+            canvas.drawText("Date", x, y, paint);
+            canvas.drawText("Duty", x + 100, y, paint);
+            canvas.drawText("TotalHrs", x + 260, y, paint);
+            canvas.drawText("NightHrs", x + 330, y, paint);
+            canvas.drawText("NDA", x + 410, y, paint);
+            y += 16;
+
+            for (DutyRecord r : dutyList) {
+                if (y > 760) {
+                    pdfDoc.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 2).create();
+                    page = pdfDoc.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = 40;
+                }
+                canvas.drawText(r.getDate(), x, y, paint);
+                canvas.drawText((r.getDutyFrom() == null ? "-" : r.getDutyFrom()) + " - " + (r.getDutyTo() == null ? "-" : r.getDutyTo()), x + 100, y, paint);
+                canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalDutyHours()), x + 260, y, paint);
+                canvas.drawText(String.format(Locale.getDefault(), "%.2f", r.getTotalNightHours()), x + 330, y, paint);
+                canvas.drawText("₹" + (r.getNightDutyAllowance() == 0.0 ? "0.00" : String.format(Locale.getDefault(), "%.2f", r.getNightDutyAllowance())), x + 410, y, paint);
+                y += 16;
+            }
+            y += 12;
+        }
+
+        // Leave section
+        if (leaveRecords != null && !leaveRecords.isEmpty()) {
+            if (y > 700) {
+                pdfDoc.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 3).create();
+                page = pdfDoc.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = 40;
+            }
+            canvas.drawText("---- Leave Records ----", x, y, paint);
+            y += 18;
+            canvas.drawText("From - To", x, y, paint);
+            canvas.drawText("Type", x + 160, y, paint);
+            canvas.drawText("Status", x + 300, y, paint);
+            canvas.drawText("Notes", x + 380, y, paint);
+            y += 16;
+
+            for (LeaveRecord lr : leaveRecords) {
+                if (y > 760) {
+                    pdfDoc.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 4).create();
+                    page = pdfDoc.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = 40;
+                }
+                canvas.drawText(lr.getLeaveFrom() + " - " + lr.getLeaveTo(), x, y, paint);
+                canvas.drawText(lr.getLeaveType(), x + 160, y, paint);
+                canvas.drawText(lr.getStatus(), x + 300, y, paint);
+                if (lr.getNotes() != null && !lr.getNotes().trim().isEmpty()) {
+                    canvas.drawText(lr.getNotes(), x + 380, y, paint);
+                }
+                y += 16;
+            }
+            y += 12;
+            canvas.drawText("Total Leaves: " + leaveRecords.size(), x, y, paint);
+        }
+
+        pdfDoc.finishPage(page);
+
         try {
-            File pdfFile = new File(getExternalFilesDir(null), "NDA_Report.pdf");
-            PdfWriter writer = new PdfWriter(pdfFile);
-            PdfDocument pdfDocument = new PdfDocument(writer);
-            Document document = new Document(pdfDocument);
+            File file = new File(getExternalFilesDir(null), "leave_and_duty_report.pdf");
+            FileOutputStream fos = new FileOutputStream(file);
+            pdfDoc.writeTo(fos);
+            pdfDoc.close();
+            fos.close();
 
-            // Title
-            document.add(new Paragraph("Night Duty Allowance Report")
-                    .setBold().setFontSize(18)
-                    .setTextAlignment(TextAlignment.CENTER));
-
-            // ================= Duty Records =================
-            SharedPreferences dutyPrefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
-            String dutyJson = dutyPrefs.getString("duty_records", "[]");
-            Type dutyType = new TypeToken<List<DutyRecord>>(){}.getType();
-            List<DutyRecord> dutyRecords = gson.fromJson(dutyJson, dutyType);
-
-            double totalDutyHours = 0;
-            double totalNightHours = 0;
-
-            if (dutyRecords != null && !dutyRecords.isEmpty()) {
-                document.add(new Paragraph("\nDuty Records:\n").setBold());
-
-                for (DutyRecord record : dutyRecords) {
-                    totalDutyHours += record.getTotalHours();
-                    totalNightHours += record.getNightHours();
-
-                    String dutyDetails = "Date: " + record.getDate() +
-                            "\nStart: " + record.getStartTime() +
-                            "  End: " + record.getEndTime() +
-                            "\nTotal Hours: " + record.getTotalHours() +
-                            "\nNight Duty Hours: " + record.getNightHours() +
-                            "\n----------------------";
-                    document.add(new Paragraph(dutyDetails));
-                }
-            } else {
-                document.add(new Paragraph("\nNo Duty Records Found.\n"));
-            }
-
-            // ================= Leave Records =================
-            int totalLeaves = 0;
-            if (leaveRecords != null && !leaveRecords.isEmpty()) {
-                document.add(new Paragraph("\nLeave Records:\n").setBold());
-
-                for (LeaveRecord record : leaveRecords) {
-                    totalLeaves++;
-                    String leaveDetails = "From: " + record.getLeaveFrom() +
-                            "  To: " + record.getLeaveTo() +
-                            "\nType: " + record.getLeaveType() +
-                            "\nNotes: " + record.getNotes() +
-                            "\nApplied On: " + record.getAppliedDate() +
-                            "\nStatus: " + record.getStatus() +
-                            "\n----------------------";
-                    document.add(new Paragraph(leaveDetails));
-                }
-            } else {
-                document.add(new Paragraph("\nNo Leave Records Found.\n"));
-            }
-
-            // ================= Summary =================
-            document.add(new Paragraph("\nSummary:\n").setBold());
-            document.add(new Paragraph("Total Duty Hours: " + totalDutyHours));
-            document.add(new Paragraph("Total Night Duty Hours: " + totalNightHours));
-            document.add(new Paragraph("Total Leaves Taken: " + totalLeaves));
-
-            document.close();
-
-            Uri pdfUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", pdfFile);
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("application/pdf");
-            intent.putExtra(Intent.EXTRA_STREAM, pdfUri);
-            startActivity(Intent.createChooser(intent, "Share PDF"));
-
-            Toast.makeText(this, "PDF Exported with Summary!", Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
+            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("application/pdf");
+            share.putExtra(Intent.EXTRA_STREAM, uri);
+            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(share, "Share PDF"));
+        } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error exporting PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }
