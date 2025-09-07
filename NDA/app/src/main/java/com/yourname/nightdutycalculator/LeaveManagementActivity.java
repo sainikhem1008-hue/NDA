@@ -197,14 +197,14 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
     // ---------- Export leave + duty PDF ----------
     // ---------- Export leave + duty PDF ----------
     private void exportLeaveAndDutyPDF() {
-    // load duty records from shared prefs the same way main activity stores them
+    // load duty records
     SharedPreferences dutyPrefs = getSharedPreferences("DutyRecords", Context.MODE_PRIVATE);
     String dutyJson = dutyPrefs.getString("duty_records", "[]");
     Type dutyListType = new TypeToken<List<DutyRecord>>(){}.getType();
     List<DutyRecord> dutyList = gson.fromJson(dutyJson, dutyListType);
     if (dutyList == null) dutyList = new ArrayList<>();
 
-    if ((dutyList.isEmpty()) && (leaveRecords.isEmpty())) {
+    if (dutyList.isEmpty() && leaveRecords.isEmpty()) {
         Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
         return;
     }
@@ -218,15 +218,15 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
 
     int x = 40;
     int y = 40;
-    canvas.drawText("LEAVE & DUTY REPORT", x, y, paint);
+    canvas.drawText("NIGHT DUTY & LEAVE REPORT", x, y, paint);
     y += 22;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
     y += 26;
 
-    // Duty section
+    // ---------- Duty Records ----------
     if (!dutyList.isEmpty()) {
-        canvas.drawText("---- Duty Records ----", x, y, paint);
+        canvas.drawText("---- Night Duty Records ----", x, y, paint);
         y += 18;
         canvas.drawText("Date", x, y, paint);
         canvas.drawText("Duty", x + 100, y, paint);
@@ -253,7 +253,7 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
         y += 12;
     }
 
-    // Leave section
+    // ---------- Leave Records ----------
     if (!leaveRecords.isEmpty()) {
         if (y > 700) {
             pdfDoc.finishPage(page);
@@ -279,8 +279,7 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
             try {
                 Date start = sdfDay.parse(lr.getLeaveFrom());
                 Date end = sdfDay.parse(lr.getLeaveTo());
-                long diff = end.getTime() - start.getTime();
-                int days = (int)(diff / (1000 * 60 * 60 * 24)) + 1; // include end day
+                int days = (int)((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
                 leaveTypeDays.put(lr.getLeaveType(), leaveTypeDays.getOrDefault(lr.getLeaveType(), 0) + days);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -304,11 +303,11 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
         }
         y += 12;
 
-        // Display total leaves by type
-        canvas.drawText("Total Leaves:", x, y, paint);
+        // Display total leaves grouped by type
+        canvas.drawText("Total Leaves by Type:", x, y, paint);
         y += 16;
         for (String type : leaveTypeDays.keySet()) {
-            canvas.drawText(leaveTypeDays.get(type) + " days " + type, x, y, paint);
+            canvas.drawText(leaveTypeDays.get(type) + " days of " + type, x, y, paint);
             y += 16;
         }
     }
@@ -316,7 +315,7 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
     pdfDoc.finishPage(page);
 
     try {
-        File file = new File(getExternalFilesDir(null), "leave_and_duty_report.pdf");
+        File file = new File(getExternalFilesDir(null), "night_duty_and_leave_report.pdf");
         FileOutputStream fos = new FileOutputStream(file);
         pdfDoc.writeTo(fos);
         pdfDoc.close();
@@ -333,4 +332,5 @@ public class LeaveManagementActivity extends AppCompatActivity implements LeaveR
         Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
     }
+        
 }
