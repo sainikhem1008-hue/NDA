@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exportToPDF() {
-    if ((dutyRecords == null || dutyRecords.isEmpty()) && 
+    if ((dutyRecords == null || dutyRecords.isEmpty()) &&
         (leaveRecords == null || leaveRecords.isEmpty())) {
         Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
         return;
@@ -414,9 +414,9 @@ public class MainActivity extends AppCompatActivity {
     canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
     y += 30;
 
-    // ---------- DUTY RECORDS ----------
+    // ================= DUTY RECORDS ==================
     if (dutyRecords != null && !dutyRecords.isEmpty()) {
-        canvas.drawText("DUTY RECORDS", x, y, paint);
+        canvas.drawText("----- Duty Records -----", x, y, paint);
         y += 20;
 
         canvas.drawText("Date", x, y, paint);
@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         for (DutyRecord r : dutyRecords) {
             if (y > 780) {
                 pdfDoc.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 2).create();
                 page = pdfDoc.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 40;
@@ -446,52 +446,47 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawText(r.isHolidayAllowancePaid() ? "Yes" : "No", x + 440, y, paint);
             y += 18;
 
-            if (r.isDualDuty()) {
-                canvas.drawText("Dual Duty: CR pending", x + 90, y, paint);
-                y += 18;
-            }
-            if (r.isDutyOnWeeklyRest()) {
-                canvas.drawText("Duty on Weekly Rest: CR pending", x + 90, y, paint);
-                y += 18;
-            }
-
             totalNightH += r.getTotalNightHours();
             totalNDA += r.getNightDutyAllowance();
         }
 
         y += 16;
-        canvas.drawText("SUMMARY", x, y, paint);
+        canvas.drawText("Duty Summary:", x, y, paint);
         y += 18;
-        canvas.drawText("Total Night Hours: " + String.format(Locale.getDefault(), "%.2f", totalNightH) + " hrs", x, y, paint);
+        canvas.drawText("Total Night Hours: " + String.format(Locale.getDefault(), "%.2f", totalNightH), x, y, paint);
         y += 18;
-        canvas.drawText("Total Night NDA: ₹" + decimalFormat.format(totalNDA), x, y, paint);
-        y += 18;
-        canvas.drawText("Total Records: " + dutyRecords.size(), x, y, paint);
-        y += 30;
+        canvas.drawText("Total NDA: ₹" + decimalFormat.format(totalNDA), x, y, paint);
+        y += 25;
     }
 
-    // ---------- LEAVE RECORDS ----------
+    // ================= LEAVE RECORDS ==================
     if (leaveRecords != null && !leaveRecords.isEmpty()) {
-        canvas.drawText("LEAVE RECORDS", x, y, paint);
+        canvas.drawText("----- Leave Records -----", x, y, paint);
         y += 20;
 
-        canvas.drawText("Date", x, y, paint);
-        canvas.drawText("Type", x + 120, y, paint);
-        canvas.drawText("Reason", x + 240, y, paint);
+        canvas.drawText("From - To", x, y, paint);
+        canvas.drawText("Type", x + 150, y, paint);
+        canvas.drawText("Status", x + 270, y, paint);
+        canvas.drawText("Notes", x + 390, y, paint);
         y += 18;
 
         for (LeaveRecord lr : leaveRecords) {
             if (y > 780) {
                 pdfDoc.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 3).create();
                 page = pdfDoc.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 40;
             }
 
-            canvas.drawText(lr.getDate(), x, y, paint);
-            canvas.drawText(lr.getLeaveType(), x + 120, y, paint);
-            canvas.drawText(lr.getReason(), x + 240, y, paint);
+            String leavePeriod = lr.getLeaveFrom() + " - " + lr.getLeaveTo();
+            canvas.drawText(leavePeriod, x, y, paint);
+            canvas.drawText(lr.getLeaveType(), x + 150, y, paint);
+            canvas.drawText(lr.getStatus(), x + 270, y, paint);
+
+            if (lr.getNotes() != null && !lr.getNotes().trim().isEmpty()) {
+                canvas.drawText(lr.getNotes(), x + 390, y, paint);
+            }
             y += 18;
         }
 
@@ -518,8 +513,8 @@ public class MainActivity extends AppCompatActivity {
         e.printStackTrace();
         Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
-}
-
+    } 
+    
     private void clearAll() {
         etDutyDate.setText("");
         etDutyFrom.setText("");
