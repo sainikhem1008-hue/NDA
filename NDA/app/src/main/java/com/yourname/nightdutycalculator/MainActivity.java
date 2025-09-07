@@ -391,28 +391,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exportToPDF() {
-        if (dutyRecords == null || dutyRecords.isEmpty()) {
-            Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    if ((dutyRecords == null || dutyRecords.isEmpty()) && 
+        (leaveRecords == null || leaveRecords.isEmpty())) {
+        Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
+        return;
+    }
 
-        PdfDocument pdfDoc = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = pdfDoc.startPage(pageInfo);
-        android.graphics.Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-        paint.setTextSize(12);
+    PdfDocument pdfDoc = new PdfDocument();
+    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+    PdfDocument.Page page = pdfDoc.startPage(pageInfo);
+    android.graphics.Canvas canvas = page.getCanvas();
+    Paint paint = new Paint();
+    paint.setTextSize(12);
 
-        int x = 40;
-        int y = 40;
+    int x = 40;
+    int y = 40;
 
-        canvas.drawText("NIGHT DUTY ALLOWANCE REPORT", x, y, paint);
-        y += 25;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
-        y += 30;
+    canvas.drawText("NIGHT DUTY ALLOWANCE REPORT", x, y, paint);
+    y += 25;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    canvas.drawText("Generated: " + sdf.format(new Date()), x, y, paint);
+    y += 30;
 
-        // Header
+    // ---------- DUTY RECORDS ----------
+    if (dutyRecords != null && !dutyRecords.isEmpty()) {
+        canvas.drawText("DUTY RECORDS", x, y, paint);
+        y += 20;
+
         canvas.drawText("Date", x, y, paint);
         canvas.drawText("Duty (day)", x + 90, y, paint);
         canvas.drawText("Night hrs", x + 240, y, paint);
@@ -422,13 +427,11 @@ public class MainActivity extends AppCompatActivity {
 
         double totalNightH = 0.0;
         double totalNDA = 0.0;
-        int recCount = 0;
 
         for (DutyRecord r : dutyRecords) {
-            recCount++;
             if (y > 780) {
                 pdfDoc.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, recCount / 20 + 2).create();
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
                 page = pdfDoc.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 40;
@@ -463,27 +466,58 @@ public class MainActivity extends AppCompatActivity {
         canvas.drawText("Total Night NDA: ₹" + decimalFormat.format(totalNDA), x, y, paint);
         y += 18;
         canvas.drawText("Total Records: " + dutyRecords.size(), x, y, paint);
-
-        pdfDoc.finishPage(page);
-
-        try {
-            File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
-            FileOutputStream fos = new FileOutputStream(file);
-            pdfDoc.writeTo(fos);
-            pdfDoc.close();
-            fos.close();
-
-            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
-            Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("application/pdf");
-            share.putExtra(Intent.EXTRA_STREAM, uri);
-            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(share, "Share PDF"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        y += 30;
     }
+
+    // ---------- LEAVE RECORDS ----------
+    if (leaveRecords != null && !leaveRecords.isEmpty()) {
+        canvas.drawText("LEAVE RECORDS", x, y, paint);
+        y += 20;
+
+        canvas.drawText("Date", x, y, paint);
+        canvas.drawText("Type", x + 120, y, paint);
+        canvas.drawText("Reason", x + 240, y, paint);
+        y += 18;
+
+        for (LeaveRecord lr : leaveRecords) {
+            if (y > 780) {
+                pdfDoc.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDoc.getPages().size() + 1).create();
+                page = pdfDoc.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = 40;
+            }
+
+            canvas.drawText(lr.getDate(), x, y, paint);
+            canvas.drawText(lr.getLeaveType(), x + 120, y, paint);
+            canvas.drawText(lr.getReason(), x + 240, y, paint);
+            y += 18;
+        }
+
+        y += 16;
+        canvas.drawText("Total Leaves: " + leaveRecords.size(), x, y, paint);
+    }
+
+    pdfDoc.finishPage(page);
+
+    try {
+        File file = new File(getExternalFilesDir(null), "night_duty_report.pdf");
+        FileOutputStream fos = new FileOutputStream(file);
+        pdfDoc.writeTo(fos);
+        pdfDoc.close();
+        fos.close();
+
+        Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(share, "Share PDF"));
+    } catch (IOException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "PDF export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+}
 
     private void clearAll() {
         etDutyDate.setText("");
