@@ -393,10 +393,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exportToPDF() {
+    // Load saved leave records
+    loadLeaveRecords();
+
     if ((dutyRecords == null || dutyRecords.isEmpty()) &&
         (leaveRecords == null || leaveRecords.isEmpty())) {
         Toast.makeText(this, "No records to export", Toast.LENGTH_SHORT).show();
         return;
+    
     }
 
     PdfDocument pdfDoc = new PdfDocument();
