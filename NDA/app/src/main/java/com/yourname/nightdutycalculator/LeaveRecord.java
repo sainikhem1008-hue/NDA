@@ -9,8 +9,8 @@ public class LeaveRecord {
     private String status; // Applied, Approved, Rejected, Completed
     private String notes;
 
-    public LeaveRecord() { 
-        this.id = System.currentTimeMillis(); 
+    public LeaveRecord() {
+        this.id = System.currentTimeMillis();
         this.status = "Applied";
     }
 
