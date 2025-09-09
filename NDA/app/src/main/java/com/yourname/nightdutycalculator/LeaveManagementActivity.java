@@ -1,96 +1,125 @@
 package com.yourname.nightdutycalculator;
 
-import android.content.Context;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class LeaveManagementActivity extends AppCompatActivity {
 
-    private Button btnExportPDF;
+    private EditText editTextLeaveDays;
+    private Spinner spinnerLeaveType;
+    private Button buttonAddLeave;
+    private RecyclerView recyclerViewLeaves;
+    private LeaveAdapter leaveAdapter;
+    private ArrayList<LeaveModel> leaveList = new ArrayList<>();
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leave_management);
 
-        btnExportPDF = findViewById(R.id.btnExportPDF);
+        editTextLeaveDays = findViewById(R.id.editTextLeaveDays);
+        spinnerLeaveType = findViewById(R.id.spinnerLeaveType);
+        buttonAddLeave = findViewById(R.id.buttonAddLeave);
+        recyclerViewLeaves = findViewById(R.id.recyclerViewLeaves);
 
-        btnExportPDF.setOnClickListener(new View.OnClickListener() {
+        dbHelper = new DBHelper(this);
+
+        // Spinner with leave types
+        String[] leaveTypes = {"Sick Leave", "Casual Leave", "Earned Leave"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, leaveTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLeaveType.setAdapter(adapter);
+
+        // RecyclerView setup
+        leaveAdapter = new LeaveAdapter(leaveList);
+        recyclerViewLeaves.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLeaves.setAdapter(leaveAdapter);
+
+        loadLeavesFromDB();
+
+        buttonAddLeave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exportCombinedReportPDF();
+                addLeaveEntry();
             }
         });
     }
 
-    /**
-     * Export merged Night Duty + Leave & Duty Report as a single PDF
-     */
-    private void exportCombinedReportPDF() {
-        Document document = new Document();
+    private void addLeaveEntry() {
+        String daysStr = editTextLeaveDays.getText().toString().trim();
+        String type = spinnerLeaveType.getSelectedItem().toString();
 
-        try {
-            // Save file in Downloads folder
-            String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    + "/NightDutyAndLeaveReport.pdf";
-
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
-            document.open();
-
-            // -------- NIGHT DUTY REPORT --------
-            document.add(new Paragraph("=== Night Duty Report ===\n\n"));
-
-            int totalNightDutyHours = 48; // Example value, replace with actual calculation
-            document.add(new Paragraph("Total Night Duty Hours: " + totalNightDutyHours + " hours\n"));
-
-            double basicPay = 50000; // Example
-            double dearnessAllowance = 10000; // Example
-            double hourlyRate = (basicPay + dearnessAllowance) / 200.0;
-            double nda = hourlyRate * (totalNightDutyHours / 6.0);
-
-            document.add(new Paragraph("Basic Pay: " + basicPay));
-            document.add(new Paragraph("Dearness Allowance: " + dearnessAllowance));
-            document.add(new Paragraph("Hourly NDA Rate: " + hourlyRate));
-            document.add(new Paragraph("NDA Calculation: " + nda + "\n\n"));
-
-            // -------- LEAVE AND DUTY REPORT --------
-            document.add(new Paragraph("=== Leave & Duty Report ===\n\n"));
-
-            // Example leave summary
-            Map<String, Integer> leaveSummary = new HashMap<>();
-            leaveSummary.put("Sick Leave", 3);
-            leaveSummary.put("Casual Leave", 5);
-            leaveSummary.put("Earned Leave", 2);
-
-            for (Map.Entry<String, Integer> entry : leaveSummary.entrySet()) {
-                document.add(new Paragraph(entry.getKey() + " = " + entry.getValue() + " days"));
-            }
-
-            document.add(new Paragraph("\nReport Generated Successfully."));
-
-            document.close();
-
-            Toast.makeText(this, "PDF Exported to Downloads folder", Toast.LENGTH_LONG).show();
-
-        } catch (DocumentException | IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error exporting PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        if (daysStr.isEmpty()) {
+            Toast.makeText(this, "Enter leave days", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        int days = Integer.parseInt(daysStr);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("leave_days", days);
+        values.put("leave_type", type);
+
+        long result = db.insert("leaves", null, values);
+
+        if (result != -1) {
+            Toast.makeText(this, "Leave added", Toast.LENGTH_SHORT).show();
+            leaveList.add(new LeaveModel(days, type));
+            leaveAdapter.notifyDataSetChanged();
+            editTextLeaveDays.setText("");
+        } else {
+            Toast.makeText(this, "Error saving leave", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadLeavesFromDB() {
+        leaveList.clear();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM leaves", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int days = cursor.getInt(cursor.getColumnIndexOrThrow("leave_days"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("leave_type"));
+                leaveList.add(new LeaveModel(days, type));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        leaveAdapter.notifyDataSetChanged();
+    }
+}
+package com.yourname.nightdutycalculator;
+
+public class LeaveModel {
+    private int days;
+    private String type;
+
+    public LeaveModel(int days, String type) {
+        this.days = days;
+        this.type = type;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public String getType() {
+        return type;
     }
 }
