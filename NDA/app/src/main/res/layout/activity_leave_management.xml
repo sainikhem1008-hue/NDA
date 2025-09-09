@@ -10,14 +10,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-    
-    <Button
-    android:id="@+id/btnExportPDF"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Export PDF"
-    android:layout_marginTop="16dp"
-    android:layout_gravity="center"/>
+
+        <!-- Export PDF button -->
+        <Button
+            android:id="@+id/buttonExportPdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Export PDF"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center" />
+
         <!-- Header -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -54,36 +56,39 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/editTextLeaveDays"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter leave days"
-        android:inputType="number" />
+        <!-- Add Leave Form -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Spinner
-        android:id="@+id/spinnerLeaveType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/editTextLeaveDays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter leave days"
+                android:inputType="number" />
 
-    <Button
-        android:id="@+id/buttonAddLeave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Leave" />
+            <Spinner
+                android:id="@+id/spinnerLeaveType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewLeaves"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="12dp"/>
-</LinearLayout>
+            <Button
+                android:id="@+id/buttonAddLeave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Leave" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewLeaves"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"/>
+        </LinearLayout>
+
         <!-- Leave Application Form -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -108,76 +113,80 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
 
-                <LinearLayout 
-                    android:layout_width="match_parent" 
-                    android:layout_height="wrap_content" 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputLayout 
+                    <com.google.android.material.textfield.TextInputLayout
                         style="@style/GreenOptionTextInputLayout"
-                        android:layout_width="0dp" 
-                        android:layout_weight="1" 
-                        android:layout_height="wrap_content" 
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:hint="@string/leave_from"
                         android:layout_marginEnd="8dp">
-                        <com.google.android.material.textfield.TextInputEditText 
-                            android:id="@+id/etLeaveFromDate" 
-                            android:layout_width="match_parent" 
-                            android:layout_height="wrap_content" 
-                            android:focusable="false" 
-                            android:inputType="none" 
-                            android:textColor="@color/black" 
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLeaveFromDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:textColor="@color/black"
                             android:textColorHint="@color/option_green" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout 
+                    <com.google.android.material.textfield.TextInputLayout
                         style="@style/GreenOptionTextInputLayout"
-                        android:layout_width="0dp" 
-                        android:layout_weight="1" 
-                        android:layout_height="wrap_content" 
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:hint="@string/leave_to"
                         android:layout_marginStart="8dp">
-                        <com.google.android.material.textfield.TextInputEditText 
-                            android:id="@+id/etLeaveToDate" 
-                            android:layout_width="match_parent" 
-                            android:layout_height="wrap_content" 
-                            android:focusable="false" 
-                            android:inputType="none" 
-                            android:textColor="@color/black" 
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLeaveToDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:textColor="@color/black"
                             android:textColorHint="@color/option_green" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout 
+                <com.google.android.material.textfield.TextInputLayout
                     style="@style/GreenOptionTextInputLayout"
-                    android:layout_width="match_parent" 
-                    android:layout_height="wrap_content" 
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="@string/type_of_leave"
                     android:layout_marginTop="12dp">
-                    <com.google.android.material.textfield.TextInputEditText 
-                        android:id="@+id/etLeaveTypeSelection" 
-                        android:layout_width="match_parent" 
-                        android:layout_height="wrap_content" 
-                        android:focusable="false" 
-                        android:inputType="none" 
-                        android:textColor="@color/black" 
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLeaveTypeSelection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:textColor="@color/black"
                         android:textColorHint="@color/option_green" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout 
+                <com.google.android.material.textfield.TextInputLayout
                     style="@style/GreenOptionTextInputLayout"
-                    android:layout_width="match_parent" 
-                    android:layout_height="wrap_content" 
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="Notes (Optional)"
                     android:layout_marginTop="12dp">
-                    <com.google.android.material.textfield.TextInputEditText 
-                        android:id="@+id/etLeaveNotes" 
-                        android:layout_width="match_parent" 
-                        android:layout_height="wrap_content" 
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLeaveNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
                         android:minLines="2"
                         android:maxLines="4"
-                        android:textColor="@color/black" 
+                        android:textColor="@color/black"
                         android:textColorHint="@color/option_green" />
                 </com.google.android.material.textfield.TextInputLayout>
 
