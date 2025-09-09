@@ -62,6 +62,8 @@ dependencies {
     
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    implementation 'com.itextpdf:itextg:5.5.10'
+
 
     // Room
     implementation 'androidx.room:room-runtime:2.7.2'
