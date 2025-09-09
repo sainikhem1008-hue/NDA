@@ -57,38 +57,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Add Leave Form -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <EditText
-                android:id="@+id/editTextLeaveDays"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter leave days"
-                android:inputType="number" />
-
-            <Spinner
-                android:id="@+id/spinnerLeaveType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/buttonAddLeave"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Add Leave" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewLeaves"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="12dp"/>
-        </LinearLayout>
-
         <!-- Leave Application Form -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -155,22 +123,19 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/GreenOptionTextInputLayout"
+                <!-- Leave Type Spinner -->
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/type_of_leave"
-                    android:layout_marginTop="12dp">
+                    android:text="Type of Leave"
+                    android:textColor="@color/option_green"
+                    android:textStyle="bold"
+                    android:layout_marginTop="12dp"/>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etLeaveTypeSelection"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:inputType="none"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/option_green" />
-                </com.google.android.material.textfield.TextInputLayout>
+                <Spinner
+                    android:id="@+id/spinnerLeaveTypeSelection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/GreenOptionTextInputLayout"
