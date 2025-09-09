@@ -15,13 +15,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LeaveManagementActivity extends AppCompatActivity {
 
     private EditText editTextLeaveDays;
     private Spinner spinnerLeaveType;
-    private Button buttonAddLeave;
+    private Button buttonAddLeave, buttonExportPdf;
     private RecyclerView recyclerViewLeaves;
     private LeaveAdapter leaveAdapter;
     private ArrayList<LeaveModel> leaveList = new ArrayList<>();
@@ -35,6 +43,7 @@ public class LeaveManagementActivity extends AppCompatActivity {
         editTextLeaveDays = findViewById(R.id.editTextLeaveDays);
         spinnerLeaveType = findViewById(R.id.spinnerLeaveType);
         buttonAddLeave = findViewById(R.id.buttonAddLeave);
+        buttonExportPdf = findViewById(R.id.buttonExportPdf);
         recyclerViewLeaves = findViewById(R.id.recyclerViewLeaves);
 
         dbHelper = new DBHelper(this);
@@ -56,6 +65,13 @@ public class LeaveManagementActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addLeaveEntry();
+            }
+        });
+
+        buttonExportPdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exportReportPdf();
             }
         });
     }
@@ -102,6 +118,58 @@ public class LeaveManagementActivity extends AppCompatActivity {
         }
         cursor.close();
         leaveAdapter.notifyDataSetChanged();
+    }
+
+    private void exportReportPdf() {
+        Document document = new Document();
+
+        try {
+            File pdfFile = new File(getExternalFilesDir(null), "Duty_Leave_Report.pdf");
+            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+            document.open();
+
+            document.add(new Paragraph("Duty and Leave Report\n\n"));
+
+            // ---- Duty Records ----
+            document.add(new Paragraph("Duty Records:\n"));
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor dutyCursor = db.rawQuery("SELECT * FROM duty", null);
+            if (dutyCursor.moveToFirst()) {
+                do {
+                    String date = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("date"));
+                    String start = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("start_time"));
+                    String end = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("end_time"));
+                    int hours = dutyCursor.getInt(dutyCursor.getColumnIndexOrThrow("hours"));
+                    document.add(new Paragraph(date + " | " + start + " - " + end + " | Hours: " + hours));
+                } while (dutyCursor.moveToNext());
+            } else {
+                document.add(new Paragraph("No duty records found."));
+            }
+            dutyCursor.close();
+
+            document.add(new Paragraph("\n"));
+
+            // ---- Leave Records ----
+            document.add(new Paragraph("Leave Records:\n"));
+            Cursor leaveCursor = db.rawQuery("SELECT * FROM leaves", null);
+            if (leaveCursor.moveToFirst()) {
+                do {
+                    int days = leaveCursor.getInt(leaveCursor.getColumnIndexOrThrow("leave_days"));
+                    String type = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow("leave_type"));
+                    document.add(new Paragraph(type + " | Days: " + days));
+                } while (leaveCursor.moveToNext());
+            } else {
+                document.add(new Paragraph("No leave records found."));
+            }
+            leaveCursor.close();
+
+            document.close();
+            Toast.makeText(this, "PDF saved: " + pdfFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating PDF", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
