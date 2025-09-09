@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -13,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -27,10 +27,10 @@ import java.util.ArrayList;
 
 public class LeaveManagementActivity extends AppCompatActivity {
 
-    private TextInputEditText etLeaveFromDate, etLeaveToDate, etLeaveNotes;
-    private Spinner spinnerLeaveTypeSelection;
-    private MaterialButton btnApplyLeave;
-    private RecyclerView rvLeaveRecords;
+    private EditText editTextLeaveDays;
+    private Spinner spinnerLeaveType;
+    private Button buttonAddLeave, buttonExportPdf;
+    private RecyclerView recyclerViewLeaves;
     private LeaveAdapter leaveAdapter;
     private ArrayList<LeaveModel> leaveList = new ArrayList<>();
     private DBHelper dbHelper;
@@ -40,39 +40,35 @@ public class LeaveManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leave_management);
 
-        // Views
-        etLeaveFromDate = findViewById(R.id.etLeaveFromDate);
-        etLeaveToDate = findViewById(R.id.etLeaveToDate);
-        etLeaveNotes = findViewById(R.id.etLeaveNotes);
-        spinnerLeaveTypeSelection = findViewById(R.id.spinnerLeaveTypeSelection);
-        btnApplyLeave = findViewById(R.id.btnApplyLeave);
-        rvLeaveRecords = findViewById(R.id.rvLeaveRecords);
+        editTextLeaveDays = findViewById(R.id.editTextLeaveDays);
+        spinnerLeaveType = findViewById(R.id.spinnerLeaveType);
+        buttonAddLeave = findViewById(R.id.buttonAddLeave);
+        buttonExportPdf = findViewById(R.id.buttonExportPdf);
+        recyclerViewLeaves = findViewById(R.id.recyclerViewLeaves);
 
         dbHelper = new DBHelper(this);
 
-        // Spinner setup
+        // Spinner with leave types
         String[] leaveTypes = {"Sick Leave", "Casual Leave", "Earned Leave"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, leaveTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLeaveTypeSelection.setAdapter(adapter);
+        spinnerLeaveType.setAdapter(adapter);
 
         // RecyclerView setup
         leaveAdapter = new LeaveAdapter(leaveList);
-        rvLeaveRecords.setLayoutManager(new LinearLayoutManager(this));
-        rvLeaveRecords.setAdapter(leaveAdapter);
+        recyclerViewLeaves.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLeaves.setAdapter(leaveAdapter);
 
         loadLeavesFromDB();
 
-        // Apply leave button
-        btnApplyLeave.setOnClickListener(new View.OnClickListener() {
+        buttonAddLeave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addLeaveEntry();
             }
         });
 
-        // Export PDF
-        findViewById(R.id.buttonExportPdf).setOnClickListener(new View.OnClickListener() {
+        buttonExportPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 exportReportPdf();
@@ -81,32 +77,28 @@ public class LeaveManagementActivity extends AppCompatActivity {
     }
 
     private void addLeaveEntry() {
-        String fromDate = etLeaveFromDate.getText().toString().trim();
-        String toDate = etLeaveToDate.getText().toString().trim();
-        String type = spinnerLeaveTypeSelection.getSelectedItem().toString();
-        String notes = etLeaveNotes.getText().toString().trim();
+        String daysStr = editTextLeaveDays.getText().toString().trim();
+        String type = spinnerLeaveType.getSelectedItem().toString();
 
-        if (fromDate.isEmpty() || toDate.isEmpty()) {
-            Toast.makeText(this, "Select From and To dates", Toast.LENGTH_SHORT).show();
+        if (daysStr.isEmpty()) {
+            Toast.makeText(this, "Enter leave days", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        int days = Integer.parseInt(daysStr);
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("from_date", fromDate);
-        values.put("to_date", toDate);
-        values.put("leave_type", type);
-        values.put("notes", notes);
+        values.put(DBHelper.COLUMN_DAYS, days);
+        values.put(DBHelper.COLUMN_TYPE, type);
 
-        long result = db.insert("leaves", null, values);
+        long result = db.insert(DBHelper.TABLE_LEAVES, null, values);
 
         if (result != -1) {
             Toast.makeText(this, "Leave added", Toast.LENGTH_SHORT).show();
-            leaveList.add(new LeaveModel(fromDate, toDate, type, notes));
+            leaveList.add(new LeaveModel(days, type));
             leaveAdapter.notifyDataSetChanged();
-            etLeaveFromDate.setText("");
-            etLeaveToDate.setText("");
-            etLeaveNotes.setText("");
+            editTextLeaveDays.setText("");
         } else {
             Toast.makeText(this, "Error saving leave", Toast.LENGTH_SHORT).show();
         }
@@ -115,15 +107,13 @@ public class LeaveManagementActivity extends AppCompatActivity {
     private void loadLeavesFromDB() {
         leaveList.clear();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM leaves", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_LEAVES, null);
 
         if (cursor.moveToFirst()) {
             do {
-                String fromDate = cursor.getString(cursor.getColumnIndexOrThrow("from_date"));
-                String toDate = cursor.getString(cursor.getColumnIndexOrThrow("to_date"));
-                String type = cursor.getString(cursor.getColumnIndexOrThrow("leave_type"));
-                String notes = cursor.getString(cursor.getColumnIndexOrThrow("notes"));
-                leaveList.add(new LeaveModel(fromDate, toDate, type, notes));
+                int days = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_DAYS));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_TYPE));
+                leaveList.add(new LeaveModel(days, type));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -143,14 +133,12 @@ public class LeaveManagementActivity extends AppCompatActivity {
             // ---- Duty Records ----
             document.add(new Paragraph("Duty Records:\n"));
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor dutyCursor = db.rawQuery("SELECT * FROM duty", null);
+            Cursor dutyCursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_DUTY, null);
             if (dutyCursor.moveToFirst()) {
                 do {
-                    String date = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("date"));
-                    String start = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("start_time"));
-                    String end = dutyCursor.getString(dutyCursor.getColumnIndexOrThrow("end_time"));
-                    int hours = dutyCursor.getInt(dutyCursor.getColumnIndexOrThrow("hours"));
-                    document.add(new Paragraph(date + " | " + start + " - " + end + " | Hours: " + hours));
+                    // For now, duty table only has ID. Expand later with real columns.
+                    int id = dutyCursor.getInt(dutyCursor.getColumnIndexOrThrow("id"));
+                    document.add(new Paragraph("Duty record #" + id));
                 } while (dutyCursor.moveToNext());
             } else {
                 document.add(new Paragraph("No duty records found."));
@@ -161,14 +149,12 @@ public class LeaveManagementActivity extends AppCompatActivity {
 
             // ---- Leave Records ----
             document.add(new Paragraph("Leave Records:\n"));
-            Cursor leaveCursor = db.rawQuery("SELECT * FROM leaves", null);
+            Cursor leaveCursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_LEAVES, null);
             if (leaveCursor.moveToFirst()) {
                 do {
-                    String fromDate = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow("from_date"));
-                    String toDate = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow("to_date"));
-                    String type = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow("leave_type"));
-                    String notes = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow("notes"));
-                    document.add(new Paragraph(type + " | From: " + fromDate + " To: " + toDate + " | Notes: " + notes));
+                    int days = leaveCursor.getInt(leaveCursor.getColumnIndexOrThrow(DBHelper.COLUMN_DAYS));
+                    String type = leaveCursor.getString(leaveCursor.getColumnIndexOrThrow(DBHelper.COLUMN_TYPE));
+                    document.add(new Paragraph(type + " | Days: " + days));
                 } while (leaveCursor.moveToNext());
             } else {
                 document.add(new Paragraph("No leave records found."));
@@ -183,4 +169,4 @@ public class LeaveManagementActivity extends AppCompatActivity {
             Toast.makeText(this, "Error creating PDF", Toast.LENGTH_SHORT).show();
         }
     }
-                        }
+}
