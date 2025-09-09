@@ -104,7 +104,7 @@ public class LeaveManagementActivity extends AppCompatActivity {
         leaveAdapter.notifyDataSetChanged();
     }
 }
-package com.yourname.nightdutycalculator;
+
 
 public class LeaveModel {
     private int days;
