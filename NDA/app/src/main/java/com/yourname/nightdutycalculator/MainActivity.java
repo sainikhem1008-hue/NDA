@@ -37,6 +37,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextInputEditText etDutyDate, etDutyFrom, etDutyTo, etBasicPay, etCeilingLimit, etDearnessAllowance;
