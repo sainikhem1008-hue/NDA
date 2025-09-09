@@ -54,7 +54,36 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <EditText
+        android:id="@+id/editTextLeaveDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter leave days"
+        android:inputType="number" />
+
+    <Spinner
+        android:id="@+id/spinnerLeaveType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/buttonAddLeave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Leave" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewLeaves"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"/>
+</LinearLayout>
         <!-- Leave Application Form -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
